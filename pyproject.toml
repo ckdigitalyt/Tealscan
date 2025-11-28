@@ -1,0 +1,14 @@
+[project]
+name = "repl-nix-workspace"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "casparser>=0.8.1",
+    "fastapi>=0.122.0",
+    "pandas>=2.3.3",
+    "pdfminer-six>=20240706",
+    "python-multipart>=0.0.20",
+    "pyxirr>=0.10.8",
+    "uvicorn>=0.38.0",
+]
