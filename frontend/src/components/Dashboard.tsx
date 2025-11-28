@@ -5,6 +5,7 @@ import { ScanResponse } from "@/types";
 import { TrendingUp, TrendingDown, AlertTriangle, Wallet, PieChart, Target, CheckCircle2 } from "lucide-react";
 import AssetChart from "./AssetChart";
 import FundTable from "./FundTable";
+import PortfolioPerformance from "./PortfolioPerformance";
 
 interface DashboardProps {
   data: ScanResponse;
@@ -182,6 +183,15 @@ export default function Dashboard({ data }: DashboardProps) {
               <span className="text-sm font-normal text-slate-500">/100</span>
             </p>
           </motion.div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="glass-card rounded-2xl p-8"
+        >
+          <PortfolioPerformance funds={data.funds} />
         </motion.div>
 
         {hasCommissions && (
