@@ -1,0 +1,100 @@
+Build a comprehensive Fintech SaaS application called "TealScan".
+It is a Mutual Fund X-Ray tool that clones the functionality and aesthetic of "PowerUp Money".
+
+**Tech Stack (Mandatory):**
+1. **Backend:** Python (FastAPI) - for PDF parsing and financial math.
+2.  **Frontend:** React (Next.js 14, App Router) - for the UI.
+3.  **Styling:** Tailwind CSS + Framer Motion (for animations).
+4.  **Icons:** Lucide React.
+
+---
+
+### **1. BACKEND SPECIFICATIONS (Python/FastAPI)**
+
+Create a FastAPI server (e.g., in a `backend/` directory or root `main.py`).
+
+**Core Libraries:** `fastapi`, `uvicorn`, `python-multipart`, `casparser` (Critical), `pdfminer.six` (Critical), `pyxirr`, `pandas`, `numpy`.
+
+**API Endpoint:** `POST /api/scan`
+* **Input:** Accepts a file (PDF) and a form field `password`.
+* **Logic Step 1 (Parsing):**
+    * Save the file temporarily.
+    * Run `casparser.read_cas_pdf(file_path, password, force_pdfminer=True)`.
+    * *Note:* You MUST set `force_pdfminer=True`. This is required to read tables that split across pages (fixes the "Missing Quant Fund" bug).
+* **Logic Step 2 (Data Extraction):**
+    * Iterate through all folios and schemes.
+    * **Validation:** Convert all values to `float` immediately to prevent Decimal errors.
+* **Logic Step 3 (Commission Detection):**
+    * Check the scheme name. Convert name to **UPPERCASE**.
+    * If the name contains "DIRECT", it is a **Direct Plan** (Good).
+    * If it does NOT contain "DIRECT", it is a **Regular Plan** (Bad).
+    * *Calculation:* If Regular, `annual_loss = current_value * 0.01` (1% approx).
+* **Logic Step 4 (XIRR Calculation):**
+    * Use `pyxirr`. Extract the transaction history for each fund.
+    * Create a cashflow arrays: `dates` and `amounts`.
+    * **Sign Logic:** Investments (SIP/Purchase) = Negative (-). Redemptions = Positive (+).
+    * Append `current_valuation` as a Positive (+) amount with `date.today()`.
+    * Calculate XIRR. If transaction history is partial/missing (resulting in XIRR > 100% or error), return `null` or a status flag "Partial Data".
+* **Logic Step 5 (Asset Classification):**
+    * If name contains "Liquid", "Debt", "Bond" -> Category: **Debt**.
+    * If name contains "Gold" -> Category: **Gold**.
+    * Else -> Category: **Equity**.
+* **Logic Step 6 (Health Rating):**
+    * XIRR > 20%: **"In-Form"**
+    * 12% - 20%: **"On-Track"**
+    * < 12%: **"Off-Track"**
+    * < 0%: **"Out-of-Form"**
+
+**Response Format:** JSON containing `net_worth`, `total_invested`, `total_loss`, `portfolio_health_score`, and a list of `funds` (with name, category, value, type, xirr, rating).
+
+---
+
+### **2. FRONTEND SPECIFICATIONS (Next.js/React)**
+
+**Design System (The "PowerUp" Look):**
+* **Theme:** Professional Light Mode.
+* **Colors:**
+    * Primary: Deep Teal (`#0F766E`)
+    * Accent: Bright Teal (`#2DD4BF`)
+    * Background: Slate White (`#F8FAFC`)
+    * Text: Navy/Slate (`#0F172A`)
+* **Typography:** Use `Manrope` or `Inter` font.
+* **UI Components:** Glassmorphism cards, rounded corners (rounded-2xl), subtle shadows.
+
+**Page Structure:**
+
+**A. Landing Page State (Before Upload):**
+* **Navbar:** Logo (TealScan) + "Beta v1.0" badge.
+* **Hero Section:**
+    * Left side: Large Typography "The Truth About Your Wealth". Gradient text effect on "Totally Naked".
+    * Subtitle: "Hidden commissions eat 40% of your corpus. Audit your portfolio in 30 seconds."
+    * Social Proof: Badge saying "₹100 Cr+ Assets Analyzed".
+* **Right Side (The Floating Card):**
+    * A beautiful, white/glass card containing the **File Upload** and **Password** inputs.
+    * Button: "Run Audit 🚀" (Gradient Teal background).
+* **Features Section (Bento Grid):**
+    * Grid of 3 cards: "Commission Hunter", "True XIRR Engine", "Portfolio Health".
+    * Use Lucide icons for each.
+
+**B. Dashboard State (After Scan):**
+* **Transition:** Use Framer Motion to smoothly fade out the Hero and fade in the Dashboard.
+* **Header Card:** A dark slate (`bg-slate-900`) card showing:
+    * **Net Worth** (Big text)
+    * **Hidden Commissions** (Red text, e.g., "₹15,000/yr lost").
+* **Metrics Row:** Total Gain (%), Funds Scanned, Portfolio Health Score (0-100).
+* **Charts Area:**
+    * Asset Allocation Bar/Pie Chart.
+    * Concentration Analysis (Large Cap vs Mid vs Small).
+* **The Health Card (Table):**
+    * List all funds.
+    * Columns: Name, Type (Direct/Regular tags), XIRR (Green/Red based on performance), Rating.
+    * Highlight "Regular" funds with a warning background.
+* **Action Plan:**
+    * If commissions found -> Show specific "Switch to Direct" alert box.
+
+---
+
+### **3. CONFIGURATION & EXECUTION**
+* Ensure `replit.nix` installs Python 3.11 and Node.js 20.
+* Configure the run command to start **both** servers (Python backend on port 8000, Next.js frontend on port 3000).
+* Configure `next.config.js` or a proxy so the Frontend can fetch from the Backend API without CORS errors.
