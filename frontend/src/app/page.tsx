@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
+import PerformancePreview from "@/components/PerformancePreview";
 import Dashboard from "@/components/Dashboard";
 import { ScanResponse, UploadState } from "@/types";
 
@@ -73,6 +74,7 @@ export default function Home() {
           >
             <Hero onScan={handleScan} isLoading={state.isLoading} error={state.error} />
             <Features />
+            <PerformancePreview />
           </motion.div>
         )}
       </AnimatePresence>
