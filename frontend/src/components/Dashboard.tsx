@@ -50,6 +50,8 @@ const itemVariants = {
 
 export default function Dashboard({ data }: DashboardProps) {
   const hasCommissions = data.total_commission_loss > 0;
+  const overlaps = detectOverlaps(data.funds);
+  const concentrationScore = calculateConcentrationScore(overlaps);
   
   return (
     <motion.div
@@ -196,6 +198,10 @@ export default function Dashboard({ data }: DashboardProps) {
         >
           <PortfolioPerformance funds={data.funds} />
         </motion.div>
+
+        <ConcentrationRisk overlaps={overlaps} score={concentrationScore} />
+
+        <SwitchCalculator portfolioValue={data.net_worth} regularFundsCount={data.regular_funds_count} />
 
         {hasCommissions && (
           <motion.div

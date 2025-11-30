@@ -62,19 +62,19 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
       transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
       className="w-full max-w-md"
     >
-      <div className="glass-card rounded-3xl p-8 shadow-card hover-lift">
+      <div className="glass-card bg-dark-card rounded-3xl p-8 shadow-card hover-lift border border-white/10">
         <motion.div 
           className="text-center mb-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
         >
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neon-green/10 border border-neon-green/30 mb-3">
             <span className="text-lg">🔒</span>
-            <span className="text-xs font-medium text-emerald-700">Secure Mode: Processed Locally</span>
+            <span className="text-xs font-medium text-neon-green">Secure Mode: Processed Locally</span>
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">Upload CAS Statement</h3>
-          <p className="text-sm text-slate-500 mt-1">
+          <h3 className="text-lg font-semibold text-white">Upload CAS Statement</h3>
+          <p className="text-sm text-gray-300 mt-1">
             Data stays on your device. No files uploaded to servers.
           </p>
         </motion.div>
@@ -85,8 +85,8 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           animate={{
-            backgroundColor: isDragOver ? "rgba(45, 212, 191, 0.05)" : "transparent",
-            borderColor: isDragOver ? "rgb(15, 118, 110)" : file ? "rgb(15, 118, 110)" : "rgb(226, 232, 240)",
+            backgroundColor: isDragOver ? "rgba(0, 255, 148, 0.05)" : "transparent",
+            borderColor: isDragOver ? "#00FF94" : file ? "#00FF94" : "rgba(255, 255, 255, 0.2)",
           }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           className={`relative border-2 border-dashed rounded-2xl p-6 cursor-pointer`}
@@ -111,17 +111,17 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
               >
                 <div className="flex items-center gap-3">
                   <motion.div 
-                    className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"
+                    className="w-10 h-10 rounded-xl bg-neon-green/10 flex items-center justify-center"
                     animate={{ rotate: 0, scale: 1 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <FileText className="w-5 h-5 text-primary" />
+                    <FileText className="w-5 h-5 text-neon-green" />
                   </motion.div>
                   <div className="text-left">
-                    <p className="text-sm font-medium text-slate-900 truncate max-w-[180px]">
+                    <p className="text-sm font-medium text-white truncate max-w-[180px]">
                       {file.name}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-gray-400">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
@@ -148,16 +148,16 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
                 className="text-center"
               >
                 <motion.div 
-                  className="w-12 h-12 rounded-2xl bg-gradient-teal mx-auto flex items-center justify-center mb-3"
+                  className="w-12 h-12 rounded-2xl bg-gradient-to-br from-neon-green to-accent mx-auto flex items-center justify-center mb-3"
                   animate={{ y: isDragOver ? -2 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Upload className="w-6 h-6 text-white" />
+                  <Upload className="w-6 h-6 text-dark-bg" />
                 </motion.div>
-                <p className="text-sm font-medium text-slate-700">
+                <p className="text-sm font-medium text-white">
                   Drop your PDF here or click to browse
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-gray-400 mt-1">
                   Only PDF files accepted
                 </p>
               </motion.div>
@@ -171,11 +171,11 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-gray-200 mb-2">
             PDF Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
             <motion.input
               type="password"
               value={password}
@@ -183,10 +183,10 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
               placeholder="Enter CAS password"
               whileFocus={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-gray-500 focus:border-neon-green focus:ring-2 focus:ring-neon-green/20 outline-none transition-all text-sm"
             />
           </div>
-          <p className="text-xs text-slate-400 mt-1.5">
+          <p className="text-xs text-gray-400 mt-1.5">
             Usually your PAN (lowercase) + DOB (DDMMYYYY). E.g., abcde1234f12121990
           </p>
         </motion.div>
@@ -201,7 +201,7 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
               className="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 flex items-start gap-2"
             >
               <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-600">{error}</p>
+              <p className="text-sm text-neon-orange">{error}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -213,12 +213,12 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
           whileTap={file && password && !isLoading ? { scale: 0.97 } : {}}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className={`
-            w-full mt-6 py-3.5 rounded-xl font-semibold text-white flex items-center justify-center gap-2
+            w-full mt-6 py-3.5 rounded-xl font-semibold text-dark-bg flex items-center justify-center gap-2
             transition-all duration-300
             ${
               file && password && !isLoading
-                ? "bg-gradient-teal shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 cursor-pointer"
-                : "bg-slate-300 cursor-not-allowed opacity-60"
+                ? "bg-gradient-to-r from-neon-green to-accent shadow-lg shadow-neon-green/30 hover:shadow-xl hover:shadow-neon-green/40 cursor-pointer"
+                : "bg-gray-600 cursor-not-allowed opacity-60"
             }
           `}
         >

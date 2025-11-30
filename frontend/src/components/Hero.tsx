@@ -35,10 +35,10 @@ const itemVariants = {
 
 export default function Hero({ onScan, isLoading, error }: HeroProps) {
   return (
-    <section className="min-h-screen pt-24 pb-12 px-4 flex items-center relative overflow-hidden">
+    <section className="min-h-screen pt-24 pb-12 px-4 flex items-center relative overflow-hidden bg-dark-bg">
       {/* Animated background gradient */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse opacity-50" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl animate-pulse opacity-50" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse opacity-50" style={{ animationDelay: "1s" }} />
       </div>
 
@@ -52,7 +52,7 @@ export default function Hero({ onScan, isLoading, error }: HeroProps) {
           >
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon-green/10 text-neon-green text-sm font-medium mb-6"
             >
               <Shield className="w-4 h-4" />
               Open Source Logic • Client-Side Privacy
@@ -60,20 +60,20 @@ export default function Hero({ onScan, isLoading, error }: HeroProps) {
 
             <motion.h1 
               variants={itemVariants}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight mb-6"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
             >
-              Wealth
+              Your Portfolio
               <br />
-              <span className="gradient-text">Health Check</span>
+              <span className="gradient-text">Truly Analyzed</span>
               <br />
-              <span className="text-2xl font-semibold text-slate-500">(Beta)</span>
+              <span className="text-2xl font-semibold text-gray-400">(Locally)</span>
             </motion.h1>
 
             <motion.p 
               variants={itemVariants}
-              className="text-lg text-slate-600 mb-8 max-w-lg mx-auto lg:mx-0"
+              className="text-lg text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0"
             >
-              Direct plans can save up to <span className="font-semibold text-emerald-600">~1% annually in fees</span>. 
+              Direct plans can save up to <span className="font-semibold text-neon-green">~1% annually in fees</span>. 
               Analyze your mutual fund portfolio in 30 seconds.
             </motion.p>
           </motion.div>
