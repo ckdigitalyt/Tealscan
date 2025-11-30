@@ -52,64 +52,30 @@ export default function Hero({ onScan, isLoading, error }: HeroProps) {
           >
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 hover:bg-primary/20 cursor-pointer transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6"
             >
               <Shield className="w-4 h-4" />
-              Trusted by 10,000+ Investors
+              Open Source Logic • Client-Side Privacy
             </motion.div>
 
             <motion.h1 
               variants={itemVariants}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight mb-6"
             >
-              The Truth About
+              Wealth
               <br />
-              <span className="gradient-text">Your Wealth</span>
+              <span className="gradient-text">Health Check</span>
               <br />
-              Totally Naked
+              <span className="text-2xl font-semibold text-slate-500">(Beta)</span>
             </motion.h1>
 
             <motion.p 
               variants={itemVariants}
               className="text-lg text-slate-600 mb-8 max-w-lg mx-auto lg:mx-0"
             >
-              Hidden commissions eat{" "}
-              <span className="font-semibold text-red-500">40% of your corpus</span>.
-              Audit your mutual fund portfolio in 30 seconds.
+              Direct plans can save up to <span className="font-semibold text-emerald-600">~1% annually in fees</span>. 
+              Analyze your mutual fund portfolio in 30 seconds.
             </motion.p>
-
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="flex flex-wrap gap-6 justify-center lg:justify-start mb-8"
-            >
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-2 hover-lift group cursor-default"
-              >
-                <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center group-hover:bg-accent/30 transition-colors">
-                  <TrendingUp className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left">
-                  <p className="text-2xl font-bold text-slate-900">100 Cr+</p>
-                  <p className="text-xs text-slate-500">Assets Analyzed</p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-2 hover-lift group cursor-default"
-              >
-                <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center group-hover:bg-accent/30 transition-colors">
-                  <Award className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left">
-                  <p className="text-2xl font-bold text-slate-900">5 Lac+</p>
-                  <p className="text-xs text-slate-500">Scans Completed</p>
-                </div>
-              </motion.div>
-            </motion.div>
           </motion.div>
 
           <motion.div

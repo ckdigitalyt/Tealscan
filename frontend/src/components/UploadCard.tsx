@@ -69,9 +69,13 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
         >
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 mb-3">
+            <span className="text-lg">🔒</span>
+            <span className="text-xs font-medium text-emerald-700">Secure Mode: Processed Locally</span>
+          </div>
           <h3 className="text-lg font-semibold text-slate-900">Upload CAS Statement</h3>
           <p className="text-sm text-slate-500 mt-1">
-            Get your Consolidated Account Statement from CAMS/Karvy
+            Data stays on your device. No files uploaded to servers.
           </p>
         </motion.div>
 
@@ -183,7 +187,7 @@ export default function UploadCard({ onScan, isLoading, error }: UploadCardProps
             />
           </div>
           <p className="text-xs text-slate-400 mt-1.5">
-            Usually your PAN followed by DOB (e.g., ABCDE1234F01011990)
+            Usually your PAN (lowercase) + DOB (DDMMYYYY). E.g., abcde1234f12121990
           </p>
         </motion.div>
 

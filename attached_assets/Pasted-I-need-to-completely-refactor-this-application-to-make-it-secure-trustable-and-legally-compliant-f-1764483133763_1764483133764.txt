@@ -1,0 +1,36 @@
+I need to completely refactor this application to make it secure, trustable, and legally compliant for the Indian market. 
+
+Please implement the following major architectural and content changes. 
+Do NOT delete my existing CSS styling, but replace the backend logic and frontend text as follows:
+
+### 1. CORE ARCHITECTURE (Crucial: Switch to Client-Side)
+- Remove all backend Python/Node code that processes the PDF file. The server must NEVER receive the file.
+- Implement the PDF parsing 100% in the browser (Client-Side) using a JavaScript library like `pdf.js` or a browser-compatible version of a CAS parser. 
+- If a ready-made client-side CAS parser library isn't available, write a custom client-side script that:
+    1. Reads the uploaded PDF as text using `pdf.js`.
+    2. Regex matches the standard CAS format (Amfi/CAMS/Karvy) to extract Fund Name, ISIN, and Current Value.
+- Add a console log or UI indicator that proves: "File processed locally. Network request size: 0KB."
+
+### 2. TRUST & PRIVACY FEATURES
+- Add a visible "Privacy Toggle" or badge near the upload box: 
+  "🔒 Secure Mode: Your data is processed locally on your device. No files are uploaded to our servers."
+- Add a "Shred Data" button in the results view that clears the local session state and refreshes the page, giving users a sense of control.
+
+### 3. CONTENT & BRANDING RE-WRITE
+- Rename the app header to: "Wealth Health Check (Beta)" (Remove "Totally Naked" - it's too risky).
+- Remove the fake social proof stats ("100 Cr+ Assets"). Replace them with a simple badge: "Open Source Logic / Client-Side Privacy."
+- Change the "Upload Instructions" text to:
+  "Upload your CAS PDF from CAMS/Karvy. 
+  Password is usually your PAN (lowercase) + DOB (DDMMYYYY)."
+
+### 4. LEGAL COMPLIANCE (SEBI/RBI Safeguards)
+- Search and Replace all "Advice" terminology with "Information" terminology:
+    - REPLACE "Switch to Direct" -> WITH "Direct Plan Savings Calculator"
+    - REPLACE "Out-of-Form" -> WITH "High Expense Ratio Flag"
+    - REPLACE "Hidden commissions eat 40%..." -> WITH "Direct plans can save up to ~1% annually in fees."
+- Add this Disclaimer in the footer (small text):
+  "Disclaimer: This tool is for informational purposes only and does not constitute investment advice. We are not a SEBI-registered investment advisor. Market data is approximate. Consult a professional before making financial decisions."
+
+### 5. FEATURE UPDATES
+- In the Results view, instead of just showing "Red/Green" flags, show a calculated column: "Estimated 20-Year Savings".
+- Formula: `Current Value * (1.01^20 - 1)` (Approximation of 1% fee difference compounded over 20 years). Label it: "Potential Savings vs Regular Plan".
