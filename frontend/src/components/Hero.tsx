@@ -29,7 +29,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.7,
-      ease: [0.16, 1, 0.3, 1],
+      ease: "easeInOut",
     },
   },
 };
@@ -82,7 +82,7 @@ export default function Hero({ onScan, onSampleData, isLoading, error }: HeroPro
           <motion.div
             initial={{ opacity: 0, x: 30, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeInOut" }}
             className="flex justify-center lg:justify-end"
           >
             <EnhancedUploadCard onScan={onScan} onSampleData={onSampleData} isLoading={isLoading} error={error} />

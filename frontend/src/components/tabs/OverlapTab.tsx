@@ -3,15 +3,27 @@
 import { motion } from "framer-motion";
 import { ScanResponse } from "@/types";
 import { AlertTriangle, TrendingDown } from "lucide-react";
-import { detectOverlaps } from "@/lib/overlapDetector";
 
 interface OverlapTabProps {
   data: ScanResponse;
 }
 
 export default function OverlapTab({ data }: OverlapTabProps) {
-  const overlaps = detectOverlaps(data.funds);
-  const overlappingFunds = data.funds.filter(f => overlaps.fundOverlaps[f.name] && overlaps.fundOverlaps[f.name].length > 0);
+  // Calculate overlap concentration
+  const fundNames = data.funds.map(f => f.name);
+  const categoryMap: Record<string, string[]> = {};
+
+  fundNames.forEach(name => {
+    const category = name.includes("Equity") ? "Equity" : 
+                    name.includes("Debt") ? "Debt" : 
+                    name.includes("Gold") ? "Gold" : 
+                    name.includes("Balanced") ? "Balanced" : "Other";
+    if (!categoryMap[category]) categoryMap[category] = [];
+    categoryMap[category].push(name);
+  });
+
+  const overlappingFunds = Object.entries(categoryMap).filter(([_, funds]) => funds.length > 1);
+  const concentrationScore = overlappingFunds.reduce((score, [_, funds]) => score + (funds.length * 15), 30);
 
   return (
     <div className="space-y-6">
@@ -20,14 +32,14 @@ export default function OverlapTab({ data }: OverlapTabProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`glass-card rounded-2xl p-6 border ${overlaps.concentrationScore > 60 ? "border-neon-orange/50 bg-neon-orange/5" : "border-white/10"}`}
+        className={`glass-card rounded-2xl p-6 border ${concentrationScore > 60 ? "border-neon-orange/50 bg-neon-orange/5" : "border-white/10"}`}
       >
         <div className="flex items-start gap-4">
-          <AlertTriangle className={`w-6 h-6 flex-shrink-0 mt-1 ${overlaps.concentrationScore > 60 ? "text-neon-orange" : "text-yellow-400"}`} />
+          <AlertTriangle className={`w-6 h-6 flex-shrink-0 mt-1 ${concentrationScore > 60 ? "text-neon-orange" : "text-yellow-400"}`} />
           <div>
-            <h3 className="text-white font-semibold mb-2">Concentration Risk Score: {overlaps.concentrationScore}/100</h3>
+            <h3 className="text-white font-semibold mb-2">Concentration Risk Score: {Math.min(100, concentrationScore)}/100</h3>
             <p className="text-gray-400 text-sm">
-              {overlaps.concentrationScore > 60 
+              {concentrationScore > 60 
                 ? "Your portfolio has significant overlap. Consider consolidating similar funds to reduce risk." 
                 : "Your portfolio diversification looks good. Monitor for potential overlaps."}
             </p>
@@ -42,28 +54,28 @@ export default function OverlapTab({ data }: OverlapTabProps) {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="glass-card rounded-2xl p-6 border border-white/10"
       >
-        <h3 className="text-lg font-semibold text-white mb-4">Overlapping Fund Holdings</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">Fund Categories & Overlaps</h3>
         <div className="space-y-3">
-          {overlappingFunds.slice(0, 5).map((fund, i) => {
-            const fundOverlaps = overlaps.fundOverlaps[fund.name] || [];
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-neon-orange/30 transition-all"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <p className="text-white font-medium text-sm">{fund.name}</p>
-                  <span className="text-xs px-2 py-1 rounded bg-neon-orange/20 text-neon-orange font-semibold">
-                    {fundOverlaps.length} overlaps
-                  </span>
-                </div>
-                <p className="text-xs text-gray-400">Overlaps with: {fundOverlaps.join(", ")}</p>
-              </motion.div>
-            );
-          })}
+          {overlappingFunds.map(([category, funds], i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-neon-orange/30 transition-all"
+            >
+              <div className="flex items-start justify-between mb-2">
+                <p className="text-white font-medium text-sm">{category}</p>
+                <span className="text-xs px-2 py-1 rounded bg-neon-orange/20 text-neon-orange font-semibold">
+                  {funds.length} funds
+                </span>
+              </div>
+              <p className="text-xs text-gray-400">{funds.join(", ").substring(0, 60)}...</p>
+            </motion.div>
+          ))}
+          {overlappingFunds.length === 0 && (
+            <p className="text-gray-400 text-sm">No significant overlaps detected</p>
+          )}
         </div>
       </motion.div>
 

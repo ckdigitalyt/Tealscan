@@ -132,7 +132,7 @@ export default function OverviewTab({ data }: OverviewTabProps) {
         className="glass-card rounded-2xl p-8 border border-white/10"
       >
         <h3 className="text-lg font-semibold text-white mb-6">Asset Allocation</h3>
-        <AssetChart data={data.asset_allocation} />
+        <AssetChart allocation={data.asset_allocation} />
       </motion.div>
     </div>
   );
