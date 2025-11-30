@@ -20,6 +20,11 @@ export default function Home() {
     setState({ isLoading: true, error: null, data: null });
 
     try {
+      // Simulate processing with progress
+      for (let i = 0; i <= 100; i += 15) {
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+
       const { parseCASFile } = await import("@/lib/pdfParser");
       const parsed = await parseCASFile(file, password);
       
@@ -63,6 +68,26 @@ export default function Home() {
     }
   };
 
+  const handleSampleData = async () => {
+    setState({ isLoading: true, error: null, data: null });
+
+    try {
+      // Simulate processing with progress
+      for (let i = 0; i <= 100; i += 15) {
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+
+      const { SAMPLE_PORTFOLIO } = await import("@/lib/sampleData");
+      setState({ isLoading: false, error: null, data: SAMPLE_PORTFOLIO as ScanResponse });
+    } catch (error) {
+      setState({
+        isLoading: false,
+        error: "Failed to load sample data",
+        data: null,
+      });
+    }
+  };
+
   const handleReset = () => {
     setState({ isLoading: false, error: null, data: null });
     setView("landing");
@@ -97,7 +122,7 @@ export default function Home() {
             {state.data ? (
               <Dashboard data={state.data} />
             ) : (
-              <Hero onScan={handleScan} isLoading={state.isLoading} error={state.error} />
+              <Hero onScan={handleScan} onSampleData={handleSampleData} isLoading={state.isLoading} error={state.error} />
             )}
           </motion.div>
         )}

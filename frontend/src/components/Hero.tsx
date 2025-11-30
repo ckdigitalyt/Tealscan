@@ -2,10 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
-import UploadCard from "./UploadCard";
+import EnhancedUploadCard from "./EnhancedUploadCard";
 
 interface HeroProps {
   onScan: (file: File, password: string) => Promise<void>;
+  onSampleData: () => Promise<void>;
   isLoading: boolean;
   error: string | null;
 }
@@ -33,7 +34,7 @@ const itemVariants = {
   },
 };
 
-export default function Hero({ onScan, isLoading, error }: HeroProps) {
+export default function Hero({ onScan, onSampleData, isLoading, error }: HeroProps) {
   return (
     <section className="min-h-screen pt-24 pb-12 px-4 flex items-center relative overflow-hidden bg-dark-bg">
       {/* Animated background gradient */}
@@ -84,7 +85,7 @@ export default function Hero({ onScan, isLoading, error }: HeroProps) {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="flex justify-center lg:justify-end"
           >
-            <UploadCard onScan={onScan} isLoading={isLoading} error={error} />
+            <EnhancedUploadCard onScan={onScan} onSampleData={onSampleData} isLoading={isLoading} error={error} />
           </motion.div>
         </div>
       </div>
