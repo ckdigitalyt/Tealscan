@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, TrendingUp, Award } from "lucide-react";
+import { Shield } from "lucide-react";
 import UploadCard from "./UploadCard";
 
 interface HeroProps {

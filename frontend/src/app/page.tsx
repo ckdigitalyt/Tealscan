@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import LandingPage from "@/components/LandingPage";
+import EnhancedLandingPage from "@/components/EnhancedLandingPage";
 import Hero from "@/components/Hero";
 import Dashboard from "@/components/Dashboard";
 import { ScanResponse, UploadState } from "@/types";
@@ -83,7 +83,7 @@ export default function Home() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <LandingPage onStartAudit={handleStartAudit} />
+            <EnhancedLandingPage onStartAudit={handleStartAudit} />
           </motion.div>
         ) : (
           <motion.div
