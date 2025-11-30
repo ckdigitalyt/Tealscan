@@ -1,0 +1,96 @@
+01:06:38.376 Running build in Washington, D.C., USA (East) – iad1
+01:06:38.377 Build machine configuration: 2 cores, 8 GB
+01:06:38.498 Cloning github.com/ckdigitalyt/Tealscan (Branch: main, Commit: 14bbfac)
+01:06:38.499 Previous build caches not available.
+01:06:40.779 Cloning completed: 2.281s
+01:06:41.187 Running "vercel build"
+01:06:41.583 Vercel CLI 48.12.0
+01:06:41.918 WARNING: You should not upload the `.next` directory.
+01:06:41.926 Installing dependencies...
+01:06:45.385 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+01:06:45.918 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+01:06:46.906 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+01:06:46.960 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+01:06:46.966 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+01:06:50.175 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+01:06:55.982 
+01:06:55.983 added 424 packages in 14s
+01:06:55.984 
+01:06:55.984 150 packages are looking for funding
+01:06:55.984   run `npm fund` for details
+01:06:56.030 Detected Next.js version: 14.2.33
+01:06:56.035 Running "npm run build"
+01:06:56.153 
+01:06:56.153 > frontend@0.1.0 build
+01:06:56.154 > next build
+01:06:56.154 
+01:06:56.805   ▲ Next.js 14.2.33
+01:06:56.805 
+01:06:56.825    Creating an optimized production build ...
+01:07:17.489  ✓ Compiled successfully
+01:07:17.490    Linting and checking validity of types ...
+01:07:22.372 
+01:07:22.376 Failed to compile.
+01:07:22.377 
+01:07:22.377 ./src/app/page.tsx
+01:07:22.377 82:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.377 
+01:07:22.378 ./src/components/EnhancedLandingPage.tsx
+01:07:22.378 4:29  Error: 'TrendingDown' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.378 72:24  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+01:07:22.378 
+01:07:22.379 ./src/components/EnhancedUploadCard.tsx
+01:07:22.379 294:19  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+01:07:22.379 
+01:07:22.379 ./src/components/PortfolioPerformance.tsx
+01:07:22.379 111:19  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+01:07:22.379 111:92  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+01:07:22.379 
+01:07:22.380 ./src/components/ProblemSolution.tsx
+01:07:22.381 57:31  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+01:07:22.381 57:46  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+01:07:22.389 
+01:07:22.389 ./src/components/SwitchCalculator.tsx
+01:07:22.394 12:60  Error: 'regularFundsCount' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.394 
+01:07:22.395 ./src/components/TestimonialCarousel.tsx
+01:07:22.395 4:16  Error: 'ChevronLeft' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.395 4:29  Error: 'ChevronRight' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.395 41:9  Error: 'next' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+01:07:22.395 42:9  Error: 'prev' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+01:07:22.396 64:39  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+01:07:22.396 90:19  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+01:07:22.396 90:38  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+01:07:22.396 
+01:07:22.396 ./src/components/tabs/ExpenseAnalysisTab.tsx
+01:07:22.396 5:10  Error: 'TrendingDown' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.396 5:24  Error: 'AlertTriangle' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.397 89:25  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+01:07:22.397 
+01:07:22.397 ./src/components/tabs/OverlapTab.tsx
+01:07:22.397 5:25  Error: 'TrendingDown' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.397 25:65  Error: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.397 26:63  Error: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.398 
+01:07:22.398 ./src/components/tabs/OverviewTab.tsx
+01:07:22.399 5:22  Error: 'TrendingDown' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.399 
+01:07:22.399 ./src/components/tabs/PerformanceTab.tsx
+01:07:22.399 5:22  Error: 'TrendingDown' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.399 
+01:07:22.399 ./src/components/tabs/RecommendationsTab.tsx
+01:07:22.399 5:50  Error: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.399 
+01:07:22.399 ./src/components/tabs/TaxTab.tsx
+01:07:22.399 5:16  Error: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.399 
+01:07:22.399 ./src/lib/pdfParser.ts
+01:07:22.400 35:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+01:07:22.400 41:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.400 52:9  Error: 'fundPattern' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+01:07:22.400 54:9  Error: 'folio_pattern' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+01:07:22.400 55:9  Error: 'amc_pattern' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+01:07:22.400 101:16  Error: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+01:07:22.400 
+01:07:22.400 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+01:07:22.421 Error: Command "npm run build" exited with 1
