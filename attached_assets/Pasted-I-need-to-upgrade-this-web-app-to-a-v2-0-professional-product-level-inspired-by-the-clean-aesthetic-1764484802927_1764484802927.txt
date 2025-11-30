@@ -1,0 +1,42 @@
+I need to upgrade this web app to a v2.0 professional product level, inspired by the clean aesthetics of CRED and the user flow of PowerUp Money.
+
+Please implement the following major changes to the codebase:
+
+### 1. UX FLOW: SPLIT LANDING & APP
+Separate the application into two distinct views/pages:
+- **View A (Landing Page):** A high-impact, clean marketing page. 
+    - **Headline:** "Stop Losing Money to Hidden Commissions."
+    - **Sub-headline:** "The only privacy-first portfolio auditor. Your data never leaves your device."
+    - **Primary CTA Button:** "Audit My Portfolio Now" (takes user to View B).
+    - **Social Proof/Features:** 3 simple cards: "100% Privacy (Client-Side)", "Tax-Aware Logic", "Overlap Detection".
+    - **Design:** Dark mode, large typography, minimal distractions (CRED style).
+
+- **View B (The App):** The actual upload and dashboard interface.
+    - This is where the File Input and Results currently live.
+    - Add a "Back" button to return to Home.
+
+### 2. NEW FEATURE: "FUND OVERLAP DETECTOR"
+When parsing the CAS file (or using dummy data for now), implement logic to check for category redundancy.
+- **Logic:** If the user has >2 funds in the same category (e.g., 2 "Bluechip" funds or 2 "Midcap" funds).
+- **UI Output:** A "Concentration Risk" card in the dashboard.
+    - *Example Text:* "⚠️ Warning: You own 3 Large Cap funds. You might be paying multiple fees for the same underlying stocks."
+
+### 3. NEW FEATURE: "SWITCH VS. TAX CALCULATOR" (The 'Real' Cost)
+Add a dynamic calculator card in the results section called "The Switch Reality Check".
+- **Inputs:** Allow user to toggle "Years held" (approximate).
+- **Logic:** 
+    - *Expense Savings:* (Portfolio Value * 1% diff).
+    - *Tax Cost:* (Portfolio Value * 0.10) [Assume 10% LTCG for estimation].
+- **Verdict:** 
+    - If (Tax Cost > 5 years of Savings) -> Show: "❌ Hold! Tax hit outweighs savings."
+    - If (Tax Cost < 2 years of Savings) -> Show: "✅ Consider Switching. Breakeven in < 2 years."
+
+### 4. VISUAL POLISH (CRED/Dark Theme)
+- **Color Palette:** Deep Charcoal (#121212) background, Soft White text, Neon Green (#00FF94) for "Savings/Good", Burnt Orange (#FF5555) for "Risks".
+- **Cards:** Glassmorphism effect (translucent background with subtle border).
+- **Typography:** Clean sans-serif (Inter or Roboto).
+- **Animations:** Smooth fade-in for the dashboard results.
+
+### TECHNICAL CONSTRAINT REMINDER
+- KEEP the client-side parsing logic. Do not revert to backend processing.
+- Ensure the navigation between Landing Page and App View happens without a full page reload (Single Page App feel) if possible, or simple Href links if easier.

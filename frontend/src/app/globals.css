@@ -1,12 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  --background: #121212;
+  --foreground: #FFFFFF;
+  --neon-green: #00FF94;
+  --neon-orange: #FF5555;
 }
 
 * {
@@ -28,7 +30,7 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', 'Manrope', system-ui, sans-serif;
+  font-family: 'Inter', 'Roboto', system-ui, sans-serif;
 }
 
 @layer utilities {
@@ -37,20 +39,20 @@ body {
   }
   
   .glass-card {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(30, 30, 30, 0.6);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
   .glass-card:hover {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(30, 30, 30, 0.8);
     border-color: rgba(45, 212, 191, 0.3);
   }
   
   .gradient-text {
-    background: linear-gradient(135deg, #0F766E 0%, #2DD4BF 100%);
+    background: linear-gradient(135deg, #00FF94 0%, #2DD4BF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -68,7 +70,7 @@ body {
   
   .hover-lift:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 20px 50px -12px rgba(0, 255, 148, 0.1);
   }
 }
 
@@ -87,10 +89,10 @@ body {
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(45, 212, 191, 0.4);
+    box-shadow: 0 0 20px rgba(0, 255, 148, 0.2);
   }
   50% {
-    box-shadow: 0 0 50px rgba(45, 212, 191, 0.7);
+    box-shadow: 0 0 50px rgba(0, 255, 148, 0.4);
   }
 }
 
@@ -146,25 +148,23 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #1E1E1E;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8;
+  background: #00FF94;
   border-radius: 4px;
   transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #00DD7A;
 }
 
-/* Smooth transitions for all interactive elements */
 button, a, input, textarea, select {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Prevent layout shift */
 html {
   scroll-padding-top: 80px;
 }

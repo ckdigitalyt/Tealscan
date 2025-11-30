@@ -6,6 +6,9 @@ import { TrendingUp, TrendingDown, AlertTriangle, Wallet, PieChart, Target, Chec
 import AssetChart from "./AssetChart";
 import FundTable from "./FundTable";
 import PortfolioPerformance from "./PortfolioPerformance";
+import ConcentrationRisk from "./ConcentrationRisk";
+import SwitchCalculator from "./SwitchCalculator";
+import { detectOverlaps, calculateConcentrationScore } from "@/lib/overlapDetector";
 
 interface DashboardProps {
   data: ScanResponse;

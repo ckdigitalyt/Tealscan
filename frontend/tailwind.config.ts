@@ -19,8 +19,12 @@ const config: Config = {
           dark: "#20C5B0",
           light: "#5EEAD4",
         },
-        background: "#F8FAFC",
-        foreground: "#0F172A",
+        "dark-bg": "#121212",
+        "dark-card": "#1E1E1E",
+        "neon-green": "#00FF94",
+        "neon-orange": "#FF5555",
+        background: "#121212",
+        foreground: "#FFFFFF",
         slate: {
           50: "#f8fafc",
           100: "#f1f5f9",
@@ -36,16 +40,18 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Inter", "Manrope", "system-ui", "sans-serif"],
+        sans: ["Inter", "Roboto", "system-ui", "sans-serif"],
       },
       backgroundImage: {
         "gradient-teal": "linear-gradient(135deg, #0F766E 0%, #2DD4BF 100%)",
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-dark": "linear-gradient(135deg, #1E1E1E 0%, #0F766E 100%)",
       },
       boxShadow: {
         glass: "0 8px 32px 0 rgba(31, 38, 135, 0.07)",
-        card: "0 4px 24px -1px rgba(0, 0, 0, 0.1)",
+        card: "0 4px 24px -1px rgba(0, 0, 0, 0.3)",
         glow: "0 0 40px rgba(45, 212, 191, 0.3)",
+        "glow-green": "0 0 40px rgba(0, 255, 148, 0.2)",
       },
       backdropBlur: {
         glass: "16px",
