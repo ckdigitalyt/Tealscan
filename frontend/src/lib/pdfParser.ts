@@ -3,6 +3,23 @@ import * as pdfjsLib from 'pdfjs-dist';
 // Use a specific CDN version that matches pdfjs-dist v4.4.168
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
 
+// Detailed logging helper
+const log = {
+  info: (msg: string, data?: any) => {
+    console.log(`[PDF-PARSER] INFO: ${msg}`, data !== undefined ? data : '');
+  },
+  error: (msg: string, error?: any) => {
+    console.error(`[PDF-PARSER] ERROR: ${msg}`, error !== undefined ? error : '');
+    if (error?.stack) console.error(`[PDF-PARSER] Stack:`, error.stack);
+  },
+  debug: (msg: string, data?: any) => {
+    console.log(`[PDF-PARSER] DEBUG: ${msg}`, data !== undefined ? data : '');
+  },
+  warn: (msg: string, data?: any) => {
+    console.warn(`[PDF-PARSER] WARN: ${msg}`, data !== undefined ? data : '');
+  }
+};
+
 export interface ExtractedFund {
   name: string;
   folio: string;
@@ -19,28 +36,58 @@ export interface ParsedCASData {
 }
 
 async function extractTextFromPDF(file: File, password: string): Promise<string> {
-  const arrayBuffer = await file.arrayBuffer();
+  log.info('Starting PDF text extraction', { fileName: file.name, fileSize: file.size, fileType: file.type });
   
   try {
-    const pdf = await pdfjsLib.getDocument({
+    log.debug('Converting file to ArrayBuffer...');
+    const arrayBuffer = await file.arrayBuffer();
+    log.debug('ArrayBuffer created', { byteLength: arrayBuffer.byteLength });
+    
+    log.debug('PDF.js worker source:', pdfjsLib.GlobalWorkerOptions.workerSrc);
+    log.info('Loading PDF document with password...');
+    
+    const loadingTask = pdfjsLib.getDocument({
       data: arrayBuffer,
       password: password,
-    }).promise;
+    });
+    
+    log.debug('PDF loading task created, awaiting promise...');
+    const pdf = await loadingTask.promise;
+    log.info('PDF loaded successfully', { numPages: pdf.numPages });
 
     let fullText = '';
 
     for (let i = 1; i <= pdf.numPages; i++) {
+      log.debug(`Extracting text from page ${i}/${pdf.numPages}...`);
       const page = await pdf.getPage(i);
       const textContent = await page.getTextContent();
       const pageText = textContent.items
         .map((item: any) => item.str)
         .join(' ');
       fullText += pageText + '\n';
+      log.debug(`Page ${i} extracted`, { textLength: pageText.length });
     }
 
+    log.info('PDF text extraction complete', { totalTextLength: fullText.length });
     return fullText;
-  } catch (error) {
-    throw new Error('Failed to extract PDF text. Check password.');
+  } catch (error: any) {
+    log.error('PDF extraction failed', error);
+    log.error('Error details', { 
+      name: error?.name, 
+      message: error?.message,
+      code: error?.code
+    });
+    
+    // More specific error messages based on PDF.js error types
+    if (error?.name === 'PasswordException') {
+      throw new Error('Incorrect password. Please check and try again.');
+    } else if (error?.name === 'InvalidPDFException') {
+      throw new Error('Invalid PDF file. Please upload a valid CAS PDF.');
+    } else if (error?.message?.includes('worker')) {
+      throw new Error('PDF processing failed. Please refresh and try again.');
+    }
+    
+    throw new Error(`Failed to extract PDF text: ${error?.message || 'Unknown error'}`);
   }
 }
 
@@ -113,24 +160,52 @@ function parseCASText(text: string): ParsedCASData {
 }
 
 export async function parseCASFile(file: File, password: string): Promise<ParsedCASData> {
-  console.log('🔒 Starting client-side PDF parsing...');
+  log.info('=== Starting CAS file parsing ===');
+  log.info('File details', { name: file.name, size: file.size, type: file.type });
   const startTime = performance.now();
 
   try {
+    log.info('Step 1: Extracting text from PDF...');
     const text = await extractTextFromPDF(file, password);
+    log.info('Step 1 complete: Text extracted', { textLength: text.length });
+    
+    log.info('Step 2: Parsing CAS text for funds...');
     const data = parseCASText(text);
+    log.info('Step 2 complete: Text parsed', { 
+      fundsCount: data.funds.length, 
+      totalValue: data.totalValue,
+      totalInvested: data.totalInvested 
+    });
 
     const endTime = performance.now();
-    console.log(`✅ File processed locally in ${(endTime - startTime).toFixed(0)}ms. Network request size: 0KB`);
-    console.log(`📊 Extracted ${data.funds.length} funds. Total value: ₹${data.totalValue.toLocaleString('en-IN')}`);
+    const duration = (endTime - startTime).toFixed(0);
+    log.info(`=== Parsing complete in ${duration}ms ===`);
+    log.info('Results', { 
+      funds: data.funds.length, 
+      totalValue: `₹${data.totalValue.toLocaleString('en-IN')}` 
+    });
 
     if (data.funds.length === 0) {
-      throw new Error('No funds found in CAS. Please check the file and password.');
+      log.warn('No funds found in parsed data');
+      log.debug('First 1000 chars of extracted text:', text.substring(0, 1000));
+      throw new Error('No funds found in CAS. Please check the file format and password.');
     }
 
     return data;
-  } catch (error) {
-    console.error('❌ PDF parsing error:', error);
-    throw error instanceof Error ? error : new Error('Failed to parse CAS PDF');
+  } catch (error: any) {
+    const endTime = performance.now();
+    log.error(`=== Parsing failed after ${(endTime - startTime).toFixed(0)}ms ===`);
+    log.error('Error in parseCASFile', error);
+    log.error('Error type', { 
+      name: error?.name, 
+      message: error?.message,
+      isError: error instanceof Error 
+    });
+    
+    // Re-throw with proper error message
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Failed to parse CAS PDF. Please try again.');
   }
 }

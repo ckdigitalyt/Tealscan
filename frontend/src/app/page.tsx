@@ -8,6 +8,19 @@ import Hero from "@/components/Hero";
 import Dashboard from "@/components/Dashboard";
 import { ScanResponse, UploadState } from "@/types";
 
+const pageLog = {
+  info: (msg: string, data?: any) => {
+    console.log(`[PAGE] INFO: ${msg}`, data !== undefined ? data : '');
+  },
+  error: (msg: string, error?: any) => {
+    console.error(`[PAGE] ERROR: ${msg}`, error !== undefined ? error : '');
+    if (error?.stack) console.error(`[PAGE] Stack:`, error.stack);
+  },
+  debug: (msg: string, data?: any) => {
+    console.log(`[PAGE] DEBUG: ${msg}`, data !== undefined ? data : '');
+  }
+};
+
 export default function Home() {
   const [view, setView] = useState<"landing" | "app">("landing");
   const [state, setState] = useState<UploadState>({
@@ -17,18 +30,37 @@ export default function Home() {
   });
 
   const handleScan = async (file: File, password: string) => {
+    pageLog.info('=== handleScan started ===');
+    pageLog.info('Input details', { 
+      fileName: file.name, 
+      fileSize: file.size, 
+      fileType: file.type,
+      passwordLength: password.length 
+    });
+    
     setState({ isLoading: true, error: null, data: null });
+    pageLog.debug('State set to loading');
 
     try {
-      // Simulate processing with progress
+      pageLog.debug('Starting simulated progress delay...');
       for (let i = 0; i <= 100; i += 15) {
         await new Promise(resolve => setTimeout(resolve, 300));
       }
+      pageLog.debug('Simulated progress complete');
 
+      pageLog.info('Importing pdfParser module...');
       const { parseCASFile } = await import("@/lib/pdfParser");
-      const parsed = await parseCASFile(file, password);
+      pageLog.info('pdfParser module imported successfully');
       
-      // Transform parsed data to ScanResponse format
+      pageLog.info('Calling parseCASFile...');
+      const parsed = await parseCASFile(file, password);
+      pageLog.info('parseCASFile returned successfully', { 
+        fundsCount: parsed.funds.length,
+        totalValue: parsed.totalValue,
+        totalInvested: parsed.totalInvested
+      });
+      
+      pageLog.debug('Transforming parsed data to ScanResponse format...');
       const mockData: ScanResponse = {
         net_worth: parsed.totalValue,
         total_invested: parsed.totalInvested,
@@ -58,11 +90,24 @@ export default function Home() {
         })),
       };
 
+      pageLog.info('=== handleScan completed successfully ===');
+      pageLog.debug('Setting state with data', { fundsCount: mockData.funds_count });
       setState({ isLoading: false, error: null, data: mockData });
-    } catch (error) {
+    } catch (error: any) {
+      pageLog.error('=== handleScan failed ===');
+      pageLog.error('Error caught in handleScan', error);
+      pageLog.error('Error details', {
+        name: error?.name,
+        message: error?.message,
+        isError: error instanceof Error
+      });
+      
+      const errorMessage = error instanceof Error ? error.message : "Failed to parse CAS file";
+      pageLog.info('Setting error state', { errorMessage });
+      
       setState({
         isLoading: false,
-        error: error instanceof Error ? error.message : "Failed to parse CAS file",
+        error: errorMessage,
         data: null,
       });
     }

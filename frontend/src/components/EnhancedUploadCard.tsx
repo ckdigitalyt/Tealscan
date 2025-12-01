@@ -13,6 +13,18 @@ import {
   FileUp,
 } from "lucide-react";
 
+const uploadLog = {
+  info: (msg: string, data?: any) => {
+    console.log(`[UPLOAD-CARD] INFO: ${msg}`, data !== undefined ? data : '');
+  },
+  error: (msg: string, error?: any) => {
+    console.error(`[UPLOAD-CARD] ERROR: ${msg}`, error !== undefined ? error : '');
+  },
+  debug: (msg: string, data?: any) => {
+    console.log(`[UPLOAD-CARD] DEBUG: ${msg}`, data !== undefined ? data : '');
+  }
+};
+
 interface EnhancedUploadCardProps {
   onScan: (file: File, password: string) => Promise<void>;
   onSampleData: () => Promise<void>;
@@ -30,6 +42,8 @@ export default function EnhancedUploadCard({
   const [password, setPassword] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  uploadLog.debug('Component rendered', { isLoading, hasError: !!error, hasFile: !!file });
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -66,8 +80,17 @@ export default function EnhancedUploadCard({
   };
 
   const handleSubmit = async () => {
-    if (file && password) {
-      await onScan(file, password);
+    uploadLog.info('handleSubmit called', { hasFile: !!file, passwordLength: password.length });
+    if (file) {
+      uploadLog.info('Starting scan...', { fileName: file.name, fileSize: file.size, hasPassword: password.length > 0 });
+      try {
+        await onScan(file, password || '');
+        uploadLog.info('onScan completed');
+      } catch (err: any) {
+        uploadLog.error('onScan threw error', err);
+      }
+    } else {
+      uploadLog.debug('Submit blocked - no file selected');
     }
   };
 

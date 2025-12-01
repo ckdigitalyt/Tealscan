@@ -1,5 +1,7 @@
 import os
+import sys
 import tempfile
+import logging
 from datetime import date
 from typing import Optional, List, Any, Union
 from decimal import Decimal
@@ -10,6 +12,17 @@ from pydantic import BaseModel
 import casparser
 import pyxirr
 import pandas as pd
+
+# Configure detailed logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger("TealScan")
+logger.setLevel(logging.DEBUG)
 
 app = FastAPI(title="TealScan API", version="1.0.0")
 
@@ -199,26 +212,40 @@ async def scan_portfolio(
     file: UploadFile = File(...),
     password: str = Form(...)
 ):
+    logger.info("=== /api/scan endpoint called ===")
+    logger.info(f"File details: name={file.filename}, content_type={file.content_type}")
+    logger.debug(f"Password length: {len(password)}")
+    
     filename = file.filename or ""
     if not filename.lower().endswith('.pdf'):
+        logger.warning(f"Rejected non-PDF file: {filename}")
         raise HTTPException(status_code=400, detail="Only PDF files are accepted")
     
     temp_file_path: Optional[str] = None
     try:
+        logger.info("Creating temporary file for PDF processing...")
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
             content = await file.read()
             temp_file.write(content)
             temp_file_path = temp_file.name
+        logger.info(f"Temporary file created: {temp_file_path}, size: {len(content)} bytes")
         
         try:
+            logger.info("Starting casparser.read_cas_pdf...")
             cas_data = casparser.read_cas_pdf(temp_file_path, password, force_pdfminer=True)
+            logger.info("casparser.read_cas_pdf completed successfully")
+            logger.debug(f"CAS data type: {type(cas_data)}")
         except Exception as e:
+            logger.error(f"casparser failed with exception: {type(e).__name__}: {str(e)}")
             error_msg = str(e).lower()
             if "password" in error_msg or "decrypt" in error_msg:
+                logger.warning("Password error detected")
                 raise HTTPException(status_code=401, detail="Incorrect password for the PDF file")
             elif "pdf" in error_msg:
+                logger.warning("Invalid PDF error detected")
                 raise HTTPException(status_code=400, detail="Invalid or corrupted PDF file")
             else:
+                logger.error(f"Unknown parsing error: {str(e)}")
                 raise HTTPException(status_code=400, detail=f"Error parsing CAS statement: {str(e)}")
         
         funds_list: List[FundData] = []
@@ -323,10 +350,13 @@ async def scan_portfolio(
             funds=funds_list
         )
         
+        logger.info("=== /api/scan completed successfully ===")
+        logger.info(f"Response summary: {len(funds_list)} funds, net_worth={round(total_value, 2)}")
         return response
     
     finally:
         if temp_file_path and os.path.exists(temp_file_path):
+            logger.debug(f"Cleaning up temporary file: {temp_file_path}")
             os.unlink(temp_file_path)
 
 
