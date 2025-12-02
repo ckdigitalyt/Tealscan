@@ -22,21 +22,21 @@ args = "TealScan"
 name = "TealScan"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd /home/runner/workspace/backend && python main.py & cd /home/runner/workspace/frontend && npm run dev"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 8000
-externalPort = 8000
+localPort = 36491
+externalPort = 6800
 
 [[ports]]
 localPort = 36961
