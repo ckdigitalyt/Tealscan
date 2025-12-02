@@ -28,10 +28,11 @@ const nextConfig = {
     ];
   },
   allowedDevOrigins: [
-    'http://localhost:5000',
-    'http://127.0.0.1:5000',
-    '*.replit.dev',
-    '*.janeway.replit.dev',
+    'localhost',
+    '127.0.0.1',
+    '.replit.dev',
+    '.sisko.replit.dev',
+    '.janeway.replit.dev',
   ],
 };
 
