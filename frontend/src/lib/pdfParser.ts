@@ -237,16 +237,19 @@ function parseCASText(text: string): ParsedCASData {
       });
 
       if (validValues.length >= 2 && name !== 'Unknown Fund') {
-        const sortedValues = [...validValues].sort((a, b) => a - b);
-        let invested = sortedValues[sortedValues.length - 2];
-        let current = sortedValues[sortedValues.length - 1];
+        let invested = validValues[0];
+        let current = validValues[validValues.length - 1];
 
-        if (invested > current) {
-          [invested, current] = [current, invested];
+        if (validValues.length === 2) {
+          invested = validValues[0];
+          current = validValues[1];
+        } else if (validValues.length > 2) {
+          invested = validValues[validValues.length - 2];
+          current = validValues[validValues.length - 1];
         }
 
-        const ratio = current / invested;
-        if (ratio > 0.1 && ratio < 50) {
+        const ratio = invested > 0 ? current / invested : 1;
+        if (ratio > 0.01 && ratio < 100) {
           const folioMatch = lines.slice(Math.max(0, i - 5), i)
             .reverse()
             .find(l => l.match(/Folio[:\s]*([A-Z0-9\/\-]+)/i));
