@@ -46,10 +46,24 @@ async function extractTextFromPDF(file: File, password: string): Promise<string>
     log.debug('PDF.js worker source:', pdfjsLib.GlobalWorkerOptions.workerSrc);
     log.info('Loading PDF document with password...');
     
+    // PDF.js can accept password as string or Uint8Array
+    // Create a password object that PDF.js can properly handle
+    const passwordValue = password ? password : '';
+    log.debug('Preparing password for PDF.js', { hasPassword: password.length > 0 });
+    
     const loadingTask = pdfjsLib.getDocument({
       data: arrayBuffer,
-      password: password,
+      password: passwordValue,
     });
+    
+    // Handle password-protected PDF with proper error handling
+    loadingTask.onPassword = (updatePassword: (pass: string) => void, reason: number) => {
+      log.debug('PDF password callback triggered', { reason });
+      if (reason === 1) {
+        // User password required
+        updatePassword(passwordValue);
+      }
+    };
     
     log.debug('PDF loading task created, awaiting promise...');
     const pdf = await loadingTask.promise;
@@ -79,12 +93,14 @@ async function extractTextFromPDF(file: File, password: string): Promise<string>
     });
     
     // More specific error messages based on PDF.js error types
-    if (error?.name === 'PasswordException') {
+    if (error?.name === 'PasswordException' || error?.message?.toLowerCase().includes('password')) {
       throw new Error('Incorrect password. Please check and try again.');
-    } else if (error?.name === 'InvalidPDFException') {
+    } else if (error?.name === 'InvalidPDFException' || error?.message?.includes('Invalid PDF')) {
       throw new Error('Invalid PDF file. Please upload a valid CAS PDF.');
     } else if (error?.message?.includes('worker')) {
       throw new Error('PDF processing failed. Please refresh and try again.');
+    } else if (error?.message?.includes('encrypted') || error?.message?.includes('Encrypted')) {
+      throw new Error('Incorrect password. Please check and try again.');
     }
     
     throw new Error(`Failed to extract PDF text: ${error?.message || 'Unknown error'}`);

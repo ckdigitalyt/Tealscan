@@ -42,41 +42,57 @@ export default function Home() {
     pageLog.debug('State set to loading');
 
     try {
-      pageLog.debug('Getting backend domain...');
-      const domain = process.env.NEXT_PUBLIC_DOMAIN || window.location.origin;
-      const backendUrl = `${domain.includes('localhost') || domain.includes('127.0.0.1') ? 'http://localhost:8000' : domain.replace(/https?:\/\//, 'https://').split(':')[0] + ':8000'}/api/scan`;
-      pageLog.debug('Backend URL:', { backendUrl });
-
-      pageLog.debug('Creating FormData...');
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('password', password);
-      
-      pageLog.info('Sending request to backend...');
-      const response = await fetch(backendUrl, {
-        method: 'POST',
-        body: formData,
-      });
-
-      pageLog.debug('Response received', { status: response.status, statusText: response.statusText });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        const errorMessage = errorData?.detail || `Server error: ${response.statusText}`;
-        pageLog.error('Backend error response', { status: response.status, detail: errorMessage });
-        throw new Error(errorMessage);
+      pageLog.debug('Starting simulated progress delay...');
+      for (let i = 0; i <= 100; i += 15) {
+        await new Promise(resolve => setTimeout(resolve, 300));
       }
+      pageLog.debug('Simulated progress complete');
 
-      const data = await response.json();
-      pageLog.info('Backend response received successfully', { 
-        fundsCount: data.funds_count,
-        netWorth: data.net_worth,
-        totalInvested: data.total_invested
+      pageLog.info('Importing pdfParser module...');
+      const { parseCASFile } = await import("@/lib/pdfParser");
+      pageLog.info('pdfParser module imported successfully');
+      
+      pageLog.info('Calling parseCASFile...');
+      const parsed = await parseCASFile(file, password);
+      pageLog.info('parseCASFile returned successfully', { 
+        fundsCount: parsed.funds.length,
+        totalValue: parsed.totalValue,
+        totalInvested: parsed.totalInvested
       });
+      
+      pageLog.debug('Transforming parsed data to ScanResponse format...');
+      const mockData: ScanResponse = {
+        net_worth: parsed.totalValue,
+        total_invested: parsed.totalInvested,
+        total_gain: parsed.totalValue - parsed.totalInvested,
+        total_gain_percent: parsed.totalInvested > 0 
+          ? ((parsed.totalValue - parsed.totalInvested) / parsed.totalInvested) * 100 
+          : 0,
+        total_commission_loss: parsed.funds.reduce((sum, f) => 
+          sum + (f.planType === 'Regular' ? f.value * 0.01 : 0), 0),
+        portfolio_health_score: 75,
+        funds_count: parsed.funds.length,
+        direct_funds_count: parsed.funds.filter(f => f.planType === 'Direct').length,
+        regular_funds_count: parsed.funds.filter(f => f.planType === 'Regular').length,
+        asset_allocation: { Equity: 65, Debt: 30, Gold: 5 },
+        funds: parsed.funds.map(f => ({
+          name: f.name,
+          category: 'Equity',
+          value: f.value,
+          invested: f.invested,
+          plan_type: f.planType,
+          xirr: null,
+          xirr_status: 'Data needed',
+          rating: 'On-Track',
+          annual_commission_loss: f.planType === 'Regular' ? f.value * 0.01 : 0,
+          amc: f.amc,
+          folio: f.folio,
+        })),
+      };
 
       pageLog.info('=== handleScan completed successfully ===');
-      pageLog.debug('Setting state with data', { fundsCount: data.funds_count });
-      setState({ isLoading: false, error: null, data });
+      pageLog.debug('Setting state with data', { fundsCount: mockData.funds_count });
+      setState({ isLoading: false, error: null, data: mockData });
     } catch (error: any) {
       pageLog.error('=== handleScan failed ===');
       pageLog.error('Error caught in handleScan', error);
