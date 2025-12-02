@@ -1,12 +1,7 @@
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Use worker from node_modules to ensure version matching
-if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url,
-  ).toString();
-}
+// Set worker source to match the installed pdfjs-dist version (4.10.38)
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
 
 // Detailed logging helper
 const log = {
