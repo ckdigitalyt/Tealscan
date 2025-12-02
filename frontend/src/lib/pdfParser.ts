@@ -84,6 +84,9 @@ async function extractTextFromPDF(file: File, password: string): Promise<string>
       const textContent = await page.getTextContent();
       
       // Group text items by Y-coordinate to preserve line breaks
+      // PDF.js TextItem uses transform matrix: [scaleX, skewX, skewY, scaleY, translateX, translateY]
+      // transform[4] = x position, transform[5] = y position
+      const LINE_TOLERANCE = 2; // Group items within 2 pixels as same line
       const lineGroups: { [key: number]: Array<{str: string, x: number}> } = {};
       
       for (const item of textContent.items) {
@@ -91,23 +94,30 @@ async function extractTextFromPDF(file: File, password: string): Promise<string>
         if (!('str' in item)) continue;
         if (item.str.trim() === '') continue;
         
-        // Round Y coordinate to group items on the same line (with tolerance)
-        const y = Math.round((item as any).y * 10) / 10;
+        // Extract coordinates from transform matrix
+        const transform = (item as any).transform;
+        if (!transform || transform.length < 6) continue;
         
-        if (!lineGroups[y]) {
-          lineGroups[y] = [];
+        const x = transform[4]; // translateX
+        const y = transform[5]; // translateY
+        
+        // Round Y coordinate with tolerance to group items on same line
+        const yKey = Math.round(y / LINE_TOLERANCE) * LINE_TOLERANCE;
+        
+        if (!lineGroups[yKey]) {
+          lineGroups[yKey] = [];
         }
-        lineGroups[y].push({ str: item.str, x: (item as any).x });
+        lineGroups[yKey].push({ str: item.str, x });
       }
       
-      // Sort lines by Y-coordinate (descending, since PDF Y increases downward)
+      // Sort lines by Y-coordinate (descending, since PDF Y origin is bottom-left)
       const sortedYs = Object.keys(lineGroups)
         .map(Number)
-        .sort((a, b) => b - a);
+        .sort((a, b) => b - a); // Higher Y = higher on page, so sort descending
       
       // Build page text with proper line breaks
-      const lines = sortedYs.map(y => {
-        return lineGroups[y]
+      const lines = sortedYs.map(yKey => {
+        return lineGroups[yKey]
           .sort((a, b) => a.x - b.x) // Sort items left to right
           .map(item => item.str)
           .join(' ');
@@ -192,9 +202,10 @@ function parseCASText(text: string): ParsedCASData {
     if (!line) continue;
 
     // Look for fund header lines: contains fund code + fund name + Direct/Growth/Dividend/Regular
-    // Example: "LCDGG - Canara Robeco Large Cap Fund   -   Direct Growth"
-    // More flexible: allow multiple spaces and various separators
-    const fundHeaderMatch = line.match(/^([A-Z0-9]{5,8})\s*[-–]\s*([A-Za-z0-9\s\-&()]+?)\s*[-–—]\s*(Direct|Regular|Growth|Dividend|DIRECT|REGULAR|GROWTH|DIVIDEND)/i);
+    // Example: "101LCDGG - Canara Robeco Large Cap Fund - Direct Growth"
+    // More flexible: no line-start anchor, allow multiple spaces and various separators
+    // Fund codes can start with numbers (e.g., 101LCDGG, 128SCDGG)
+    const fundHeaderMatch = line.match(/([A-Z0-9]{5,10})\s*[-–]\s*([A-Za-z0-9\s\-&()'.]+?)\s*[-–—]\s*(Direct|Regular|Growth|Dividend|DIRECT|REGULAR|GROWTH|DIVIDEND)/i);
     
     if (fundHeaderMatch) {
       const fundCode = fundHeaderMatch[1];
@@ -227,7 +238,7 @@ function parseCASText(text: string): ParsedCASData {
         if (isinMatch) isin = isinMatch[1].trim().substring(0, 15);
         
         // Break if we hit next fund or transaction section
-        if (/^[A-Z0-9]{5,8}\s*-/i.test(detailLine) || detailLine.match(/Date.*Amount.*Price/)) break;
+        if (/[A-Z0-9]{5,10}\s*[-–]\s*[A-Za-z]/i.test(detailLine) || detailLine.match(/Date.*Amount.*Price/)) break;
       }
 
       // Extract AMC from fund name
