@@ -6,6 +6,8 @@ import ProblemSolution from "./ProblemSolution";
 import HowItWorks from "./HowItWorks";
 import FeatureGrid from "./FeatureGrid";
 import TestimonialCarousel from "./TestimonialCarousel";
+import SavingsComparison from "./SavingsComparison";
+import FAQ from "./FAQ";
 import Footer from "./Footer";
 import { useState } from "react";
 
@@ -193,11 +195,13 @@ export default function EnhancedLandingPage({
 
       {/* Sections */}
       <ProblemSolution />
+      <SavingsComparison />
       <div id="how-it-works">
         <HowItWorks />
       </div>
       <FeatureGrid />
       <TestimonialCarousel />
+      <FAQ />
       <Footer />
     </div>
   );

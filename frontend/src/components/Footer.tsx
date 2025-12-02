@@ -1,30 +1,40 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Linkedin, Github, Lock } from "lucide-react";
+import { Mail, Linkedin, Github, Shield } from "lucide-react";
 
 export default function Footer() {
   const links = [
     {
       title: "Product",
-      items: ["Features", "Pricing", "Security", "Changelog"],
+      items: [
+        { name: "Features", href: "#" },
+        { name: "Security", href: "#" },
+        { name: "How It Works", href: "#how-it-works" },
+      ],
     },
     {
-      title: "Resources",
-      items: ["Blog", "Documentation", "FAQ", "Contact"],
+      title: "Legal",
+      items: [
+        { name: "Privacy Policy", href: "#" },
+        { name: "Terms of Service", href: "#" },
+        { name: "Disclaimer", href: "#" },
+      ],
     },
     {
-      title: "Company",
-      items: ["About", "Team", "Privacy Policy", "Terms of Service"],
+      title: "Support",
+      items: [
+        { name: "FAQ", href: "#faq" },
+        { name: "Contact", href: "#" },
+        { name: "Help Center", href: "#" },
+      ],
     },
   ];
 
   return (
-    <footer className="bg-dark-bg border-t border-white/10 py-16 px-4">
+    <footer className="bg-gray-900 border-t border-white/10 py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Main Footer Content */}
         <div className="grid md:grid-cols-4 gap-12 mb-12">
-          {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -32,24 +42,26 @@ export default function Footer() {
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-green to-accent shadow-lg shadow-neon-green/30 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-dark-bg" />
+                <Shield className="w-5 h-5 text-dark-bg" />
               </div>
-              <span className="text-lg font-bold text-white">
-                Wealth Health Check
-              </span>
+              <span className="text-lg font-bold text-white">TealScan</span>
             </div>
-            <p className="text-sm text-gray-400 mb-6">
-              Privacy-first portfolio analyzer. Your data never leaves your browser.
+            <p className="text-sm text-gray-400 mb-2 font-medium">
+              Privacy-First Portfolio Analyzer
+            </p>
+            <p className="text-sm text-gray-500 mb-6">
+              Your data never leaves your browser. All analysis happens locally on your device.
             </p>
             <div className="flex gap-4">
               {[
-                { Icon: Linkedin, href: "#" },
-                { Icon: Github, href: "#" },
-                { Icon: Mail, href: "mailto:hello@wealthcheck.io" },
-              ].map(({ Icon }, i) => (
+                { Icon: Linkedin, href: "#", label: "LinkedIn" },
+                { Icon: Github, href: "#", label: "GitHub" },
+                { Icon: Mail, href: "mailto:hello@tealscan.io", label: "Email" },
+              ].map(({ Icon, href, label }) => (
                 <motion.a
-                  key={i}
-                  href="#"
+                  key={label}
+                  href={href}
+                  aria-label={label}
                   whileHover={{ scale: 1.1, color: "#00FF94" }}
                   className="text-gray-400 hover:text-neon-green transition-colors"
                 >
@@ -59,7 +71,6 @@ export default function Footer() {
             </div>
           </motion.div>
 
-          {/* Links */}
           {links.map((section, i) => (
             <motion.div
               key={section.title}
@@ -72,12 +83,12 @@ export default function Footer() {
               </h3>
               <ul className="space-y-3">
                 {section.items.map((item) => (
-                  <li key={item}>
+                  <li key={item.name}>
                     <a
-                      href="#"
+                      href={item.href}
                       className="text-sm text-gray-400 hover:text-neon-green transition-colors"
                     >
-                      {item}
+                      {item.name}
                     </a>
                   </li>
                 ))}
@@ -86,14 +97,15 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-500">
-            © 2025 Wealth Health Check. All rights reserved.
-          </p>
-          <p className="text-xs text-gray-600 text-center md:text-right mt-4 md:mt-0 max-w-md">
-            Disclaimer: For informational purposes only. Not investment advice. Consult professionals before making financial decisions.
-          </p>
+        <div className="border-t border-white/10 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-gray-500">
+              © 2024 TealScan. All rights reserved.
+            </p>
+            <p className="text-xs text-gray-600 text-center md:text-right max-w-lg">
+              Not financial advice. Please consult a SEBI-registered investment advisor before making any investment decisions. For informational purposes only.
+            </p>
+          </div>
         </div>
       </div>
     </footer>

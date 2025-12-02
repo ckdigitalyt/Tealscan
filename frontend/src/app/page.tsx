@@ -28,6 +28,7 @@ export default function Home() {
     error: null,
     data: null,
   });
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   const handleScan = async (file: File, password: string) => {
     pageLog.info('=== handleScan started ===');
@@ -92,6 +93,7 @@ export default function Home() {
 
       pageLog.info('=== handleScan completed successfully ===');
       pageLog.debug('Setting state with data', { fundsCount: mockData.funds_count });
+      setIsDemoMode(false);
       setState({ isLoading: false, error: null, data: mockData });
     } catch (error: any) {
       pageLog.error('=== handleScan failed ===');
@@ -123,6 +125,7 @@ export default function Home() {
       }
 
       const { SAMPLE_PORTFOLIO } = await import("@/lib/sampleData");
+      setIsDemoMode(true);
       setState({ isLoading: false, error: null, data: SAMPLE_PORTFOLIO as ScanResponse });
     } catch (error) {
       setState({
@@ -135,6 +138,7 @@ export default function Home() {
 
   const handleReset = () => {
     setState({ isLoading: false, error: null, data: null });
+    setIsDemoMode(false);
     setView("landing");
   };
 
@@ -165,7 +169,7 @@ export default function Home() {
           >
             <Navbar onReset={handleReset} showReset={!!state.data} />
             {state.data ? (
-              <Dashboard data={state.data} />
+              <Dashboard data={state.data} isDemoMode={isDemoMode} />
             ) : (
               <Hero onScan={handleScan} onSampleData={handleSampleData} isLoading={state.isLoading} error={state.error} />
             )}
