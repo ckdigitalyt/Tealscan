@@ -126,64 +126,88 @@ function parseCASText(text: string): ParsedCASData {
     .replace(/Rs\s+/g, '₹');  // Rs format
 
   log.debug('Normalized text length:', normalizedText.length);
-  log.debug('First 500 chars of text:', normalizedText.substring(0, 500));
+  log.debug('First 1000 chars of text:', normalizedText.substring(0, 1000));
 
   const lines = normalizedText.split('\n');
   log.debug('Total lines:', lines.length);
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
+    const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : '';
     
     if (!line) continue;
 
-    // Look for fund entries - more flexible pattern matching
-    // Look for lines with fund characteristics
+    // Look for fund entries - more specific pattern matching for CAS format
+    // CAS typically has: Fund Name, ISIN, Growth/Dividend, Plan Type, Values
     const hasISIN = line.match(/ISIN[:\s]+[A-Z0-9]{12}/i);
-    const hasGrowthDiv = line.match(/Growth|Dividend|Gross|Net|Value/i);
-    const hasPlan = line.match(/Direct|Regular|Growth|Dividend/i);
-    const hasValue = line.match(/[\d,]+\.?\d+/);
+    const hasGrowthDiv = line.match(/(Growth|Dividend)[\s\-]+(Growth|Dividend|Direct|Regular)/i);
+    const hasPlan = line.match(/\b(Direct|Regular)\b/i);
 
-    if ((hasISIN || hasGrowthDiv) && hasPlan && hasValue) {
+    if ((hasISIN || hasGrowthDiv) && hasPlan) {
       try {
-        // Extract fund name (everything before ISIN or Growth/Dividend)
-        const nameMatch = line.match(/^([A-Za-z\s\-&()0-9]+?)(?:\s+ISIN|\s+Growth|\s+Dividend|$)/i);
-        const name = nameMatch ? nameMatch[1].trim() : 'Unknown Fund';
+        // Extract fund name - everything before ISIN or Growth/Dividend
+        let name = 'Unknown Fund';
+        const nameMatch = line.match(/^([A-Za-z\s\-&()0-9\.]+?)(?:\s+ISIN|\s+(?:Growth|Dividend)|\s+(?:Direct|Regular)|$)/i);
+        if (nameMatch) {
+          name = nameMatch[1].trim();
+        }
 
-        // Extract plan type
-        const planMatch = line.match(/(Direct|Regular)/i);
+        // Extract plan type (Direct or Regular)
+        const planMatch = line.match(/\b(Direct|Regular)\b/i);
         const planType = planMatch ? planMatch[1] : 'Regular';
 
-        // Extract values - handle both ₹ and numeric values
-        const allValues = line.match(/[\d,]+\.?\d+/g);
-        if (allValues && allValues.length >= 2) {
-          try {
-            const currentValue = parseFloat(allValues[allValues.length - 1].replace(/,/g, ''));
-            const investedAmount = parseFloat(allValues[0].replace(/,/g, ''));
+        // Extract values - look for numbers that appear after ₹ symbol or as decimal numbers
+        // In CAS, typically: invested amount, current value
+        const rupeValuesStr = line.match(/₹\s*[\d,]+\.?\d*/g) || [];
+        const numericValues = line.match(/[\d]{1,3}(?:,[\d]{3})*(?:\.[\d]+)?/g) || [];
 
-            // Extract folio
-            const folioMatch = lines.slice(Math.max(0, i - 5), i).reverse().find(l => l.match(/[A-Z0-9]{4,}[\/\-]?[A-Z0-9]*/));
-            const folio = folioMatch ? folioMatch.trim().substring(0, 25) : 'N/A';
+        log.debug('Fund line analysis:', { 
+          name, 
+          planType, 
+          rupeValuesCount: rupeValuesStr.length,
+          numericValuesCount: numericValues.length,
+          line: line.substring(0, 100)
+        });
 
-            // Guess AMC from fund name
-            const amcMatch = name.match(/(ICICI|HDFC|Axis|SBI|Motilal|Franklin|Kotak|DSP|L&T|Aditya|Nippon|JM|IDFC|Canara|LIC|UTI|Tata|Mahindra|Quantum|Invesco|PGIM)/i);
-            const amc = amcMatch ? amcMatch[1] : 'Unknown';
+        if (numericValues.length >= 2) {
+          // Extract last two numeric values - typically invested and current value
+          // Take the last two numbers which are usually the amounts
+          const cleanedValues = numericValues.map(v => parseFloat(v.replace(/,/g, '')));
+          
+          // Filter out very small numbers (like ISIN checksums or quantities)
+          const significantValues = cleanedValues.filter(v => v > 100);
+          
+          if (significantValues.length >= 2) {
+            // Last two significant values are usually invested and current value
+            const investedAmount = significantValues[significantValues.length - 2];
+            const currentValue = significantValues[significantValues.length - 1];
 
-            if (currentValue > 0 || investedAmount > 0) {
-              log.debug('Found fund:', { name, currentValue, investedAmount, planType, amc });
-              funds.push({
-                name,
-                folio,
-                value: currentValue,
-                invested: investedAmount,
-                planType,
-                amc,
-              });
+            // Validate amounts are reasonable (not too extreme ratio)
+            const ratio = currentValue / investedAmount;
+            if (ratio > 0.01 && ratio < 100) { // Reasonable return ratio
+              // Extract folio from previous lines
+              const folioMatch = lines.slice(Math.max(0, i - 5), i).reverse().find(l => l.match(/[A-Z0-9]{4,}[\/\-]?[A-Z0-9]{2,}/));
+              const folio = folioMatch ? folioMatch.trim().substring(0, 25) : 'N/A';
 
-              totalValue += currentValue;
-              totalInvested += investedAmount;
+              // Guess AMC from fund name
+              const amcMatch = name.match(/(ICICI|HDFC|Axis|SBI|Motilal|Franklin|Kotak|DSP|L&T|Aditya|Nippon|JM|IDFC|Canara|LIC|UTI|Tata|Mahindra|Quantum|Invesco|PGIM)/i);
+              const amc = amcMatch ? amcMatch[1] : 'Unknown';
+
+              if (currentValue > 0) {
+                log.debug('Found valid fund:', { name, investedAmount, currentValue, planType, amc, ratio });
+                funds.push({
+                  name,
+                  folio,
+                  value: currentValue,
+                  invested: investedAmount,
+                  planType,
+                  amc,
+                });
+
+                totalValue += currentValue;
+                totalInvested += investedAmount;
+              }
             }
-          } catch (parseErr) {
-            log.debug('Error parsing values:', parseErr);
           }
         }
       } catch (e) {
@@ -192,7 +216,7 @@ function parseCASText(text: string): ParsedCASData {
     }
   }
 
-  log.debug('Parsed funds count:', funds.length);
+  log.debug('Final parsed data:', { fundsCount: funds.length, totalValue, totalInvested });
   return {
     funds,
     totalValue,
