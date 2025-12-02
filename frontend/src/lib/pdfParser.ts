@@ -164,7 +164,8 @@ function parseCASText(text: string): ParsedCASData {
 
     // Look for fund header lines: contains fund code + fund name + Direct/Growth/Dividend/Regular
     // Example: "LCDGG - Canara Robeco Large Cap Fund   -   Direct Growth"
-    const fundHeaderMatch = line.match(/^([A-Z0-9]{5,8})\s*-\s*([A-Za-z\s\-&()]+?)\s*-\s*(Direct|Regular|Growth|Dividend|DIRECT|INDIRECT)/i);
+    // More flexible: allow multiple spaces and various separators
+    const fundHeaderMatch = line.match(/^([A-Z0-9]{5,8})\s*[-–]\s*([A-Za-z0-9\s\-&()]+?)\s*[-–—]\s*(Direct|Regular|Growth|Dividend|DIRECT|REGULAR|GROWTH|DIVIDEND)/i);
     
     if (fundHeaderMatch) {
       const fundCode = fundHeaderMatch[1];
