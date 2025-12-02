@@ -1,7 +1,12 @@
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Use a specific CDN version that matches pdfjs-dist v4.4.168
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+// Use worker from node_modules to ensure version matching
+if (typeof window !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url,
+  ).toString();
+}
 
 // Detailed logging helper
 const log = {
