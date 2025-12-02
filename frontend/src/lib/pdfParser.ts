@@ -154,142 +154,106 @@ function parseCASText(text: string): ParsedCASData {
   let totalInvested = 0;
 
   log.debug('Starting CAS text parsing');
-  log.debug('Text length:', text.length);
-  log.debug('First 2000 chars:', text.substring(0, 2000));
-
-  const fullText = text.replace(/\s+/g, ' ');
-  
-  const summaryPatterns = [
-    /Total\s+Value[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-    /Grand\s+Total[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-    /Market\s+Value[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-    /Current\s+Value[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-    /Valuation[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-  ];
-
-  const costPatterns = [
-    /Cost\s+Value[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-    /Total\s+Cost[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-    /Investment\s+Value[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-    /Amount\s+Invested[:\s]*₹?\s*([\d,]+(?:\.\d{1,2})?)/gi,
-  ];
-
-  for (const pattern of summaryPatterns) {
-    let match;
-    while ((match = pattern.exec(fullText)) !== null) {
-      const value = parseFloat(match[1].replace(/,/g, ''));
-      if (value > 1000 && value < 100000000000 && !isLikelyDate(match[1])) {
-        log.debug('Found potential total value:', { pattern: pattern.source, value });
-        if (value > totalValue) totalValue = value;
-      }
-    }
-  }
-
-  for (const pattern of costPatterns) {
-    let match;
-    while ((match = pattern.exec(fullText)) !== null) {
-      const value = parseFloat(match[1].replace(/,/g, ''));
-      if (value > 1000 && value < 100000000000 && !isLikelyDate(match[1])) {
-        log.debug('Found potential cost value:', { pattern: pattern.source, value });
-        if (value > totalInvested) totalInvested = value;
-      }
-    }
-  }
-
-  const fundPatterns = [
-    /([A-Za-z][A-Za-z\s\-&()\.]+(?:Fund|Plan|Growth|Dividend))\s+(?:ISIN[:\s]*)?([A-Z0-9]{12})?\s*(?:.*?)(Direct|Regular)/gi,
-    /([A-Za-z][A-Za-z\s\-&()\.0-9]+)\s+(Growth|Dividend)\s*-?\s*(Direct|Regular)/gi,
-  ];
-
   const lines = text.split(/[\n\r]+/);
   
+  const fundsByName: { [key: string]: ExtractedFund } = {};
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (!line || line.length < 10) continue;
+    if (!line) continue;
 
-    const hasFundIndicator = /Growth|Dividend|ISIN|Direct Plan|Regular Plan/i.test(line);
-    const hasPlanType = /\b(Direct|Regular)\b/i.test(line);
+    // Look for fund header lines: contains fund code + fund name + Direct/Growth/Dividend/Regular
+    // Example: "LCDGG - Canara Robeco Large Cap Fund   -   Direct Growth"
+    const fundHeaderMatch = line.match(/^([A-Z0-9]{5,8})\s*-\s*([A-Za-z\s\-&()]+?)\s*-\s*(Direct|Regular|Growth|Dividend|DIRECT|INDIRECT)/i);
     
-    if (hasFundIndicator && hasPlanType) {
-      let name = 'Unknown Fund';
-      const nameMatch = line.match(/^([A-Za-z][A-Za-z\s\-&()\.0-9]{5,60}?)(?:\s+ISIN|\s+Growth|\s+Dividend|\s+Direct|\s+Regular)/i);
-      if (nameMatch) {
-        name = nameMatch[1].trim().replace(/\s+/g, ' ');
+    if (fundHeaderMatch) {
+      const fundCode = fundHeaderMatch[1];
+      const fundName = fundHeaderMatch[2].trim().replace(/\s+/g, ' ');
+      
+      log.debug('Found fund header:', { fundCode, fundName, line: line.substring(0, 100) });
+
+      // Look for ISIN and other details on next lines
+      let planType = 'Regular';
+      let folio = 'N/A';
+      let isin = '';
+      let amc = 'Unknown';
+
+      // Search ahead for more details
+      for (let j = i + 1; j < Math.min(i + 10, lines.length); j++) {
+        const detailLine = lines[j].trim();
+        
+        // Look for plan type
+        if (/Direct|Regular|DIRECT|REGULAR/i.test(detailLine)) {
+          const planMatch = detailLine.match(/(Direct|Regular|DIRECT|REGULAR)/i);
+          if (planMatch) planType = planMatch[1].charAt(0).toUpperCase() + planMatch[1].slice(1).toLowerCase();
+        }
+        
+        // Look for folio
+        const folioMatch = detailLine.match(/Folio\s+(?:No)?[:\s]*([A-Z0-9\/\-]+)/i);
+        if (folioMatch) folio = folioMatch[1].trim().substring(0, 25);
+        
+        // Look for ISIN
+        const isinMatch = detailLine.match(/ISIN[:\s]*([A-Z0-9\s]+)/i);
+        if (isinMatch) isin = isinMatch[1].trim().substring(0, 15);
+        
+        // Break if we hit next fund or transaction section
+        if (/^[A-Z0-9]{5,8}\s*-/i.test(detailLine) || detailLine.match(/Date.*Amount.*Price/)) break;
       }
 
-      const planMatch = line.match(/\b(Direct|Regular)\b/i);
-      const planType = planMatch ? planMatch[1] : 'Regular';
+      // Extract AMC from fund name
+      const amcMatch = fundName.match(/(ICICI|HDFC|Axis|SBI|Motilal|Franklin|Kotak|DSP|L&T|Aditya|Nippon|JM|IDFC|Canara|LIC|UTI|Tata|Mahindra|Quantum|Invesco|PGIM|Mirae|Parag Parikh|PPFAS|Edelweiss|Sundaram)/i);
+      amc = amcMatch ? amcMatch[1] : 'Unknown';
 
-      const currencyValues = extractCurrencyValues(line);
-      
-      const contextLines = lines.slice(Math.max(0, i - 2), Math.min(lines.length, i + 3)).join(' ');
-      const contextValues = extractCurrencyValues(contextLines);
+      // Now search for Market Value and Cost Value for this fund
+      let marketValue = 0;
+      let costValue = 0;
 
-      const validValues = (currencyValues.length >= 2 ? currencyValues : contextValues)
-        .filter(v => v > 100 && v < 10000000000 && !isLikelyDate(v.toString()));
-
-      log.debug('Fund candidate:', { 
-        name, 
-        planType, 
-        valuesFound: validValues.length,
-        values: validValues.slice(0, 5),
-        line: line.substring(0, 80)
-      });
-
-      if (validValues.length >= 2 && name !== 'Unknown Fund') {
-        let invested = validValues[0];
-        let current = validValues[validValues.length - 1];
-
-        if (validValues.length === 2) {
-          invested = validValues[0];
-          current = validValues[1];
-        } else if (validValues.length > 2) {
-          invested = validValues[validValues.length - 2];
-          current = validValues[validValues.length - 1];
+      for (let j = i; j < Math.min(i + 50, lines.length); j++) {
+        const valueLine = lines[j].trim();
+        
+        // Look for Market Value
+        const mvMatch = valueLine.match(/Market\s+Value.*?INR\s+([\d,]+(?:\.\d{1,2})?)/i);
+        if (mvMatch) {
+          marketValue = parseFloat(mvMatch[1].replace(/,/g, ''));
+          log.debug('Found market value:', { fundCode, marketValue });
         }
-
-        const ratio = invested > 0 ? current / invested : 1;
-        if (ratio > 0.01 && ratio < 100) {
-          const folioMatch = lines.slice(Math.max(0, i - 5), i)
-            .reverse()
-            .find(l => l.match(/Folio[:\s]*([A-Z0-9\/\-]+)/i));
-          const folio = folioMatch 
-            ? (folioMatch.match(/Folio[:\s]*([A-Z0-9\/\-]+)/i)?.[1] || 'N/A')
-            : 'N/A';
-
-          const amcMatch = name.match(/(ICICI|HDFC|Axis|SBI|Motilal|Franklin|Kotak|DSP|L&T|Aditya|Nippon|JM|IDFC|Canara|LIC|UTI|Tata|Mahindra|Quantum|Invesco|PGIM|Mirae|Parag Parikh|PPFAS|Edelweiss|Sundaram)/i);
-          const amc = amcMatch ? amcMatch[1] : 'Unknown';
-
-          const existingFund = funds.find(f => 
-            f.name.toLowerCase().includes(name.toLowerCase().substring(0, 20)) ||
-            name.toLowerCase().includes(f.name.toLowerCase().substring(0, 20))
-          );
-
-          if (!existingFund) {
-            log.debug('Adding fund:', { name, invested, current, planType, amc, ratio });
-            funds.push({
-              name,
-              folio,
-              value: current,
-              invested: invested,
-              planType,
-              amc,
-            });
-          }
+        
+        // Look for Cost Value or Total Cost Value
+        const cvMatch = valueLine.match(/(?:Total\s+)?Cost\s+Value.*?INR?\s*[:\s]*([\d,]+(?:\.\d{1,2})?)/i);
+        if (cvMatch) {
+          costValue = parseFloat(cvMatch[1].replace(/,/g, ''));
+          log.debug('Found cost value:', { fundCode, costValue });
         }
+        
+        // Break if we hit next fund
+        if (j > i && /^[A-Z0-9]{5,8}\s*-/i.test(valueLine)) break;
+      }
+
+      if (marketValue > 0 || costValue > 0) {
+        if (costValue === 0) costValue = marketValue;
+        if (marketValue === 0) marketValue = costValue;
+
+        log.debug('Adding fund from header:', { fundCode, fundName, marketValue, costValue, planType });
+        
+        fundsByName[fundCode] = {
+          name: fundName,
+          folio,
+          value: marketValue,
+          invested: costValue,
+          planType,
+          amc,
+        };
       }
     }
   }
 
-  if (funds.length > 0) {
-    const calculatedValue = funds.reduce((sum, f) => sum + f.value, 0);
-    const calculatedInvested = funds.reduce((sum, f) => sum + f.invested, 0);
-    
-    if (totalValue === 0 || Math.abs(totalValue - calculatedValue) / calculatedValue > 0.5) {
-      totalValue = calculatedValue;
-    }
-    if (totalInvested === 0 || Math.abs(totalInvested - calculatedInvested) / calculatedInvested > 0.5) {
-      totalInvested = calculatedInvested;
+  // Convert to array and sum totals
+  for (const fundCode in fundsByName) {
+    const fund = fundsByName[fundCode];
+    if (fund.value > 0 || fund.invested > 0) {
+      funds.push(fund);
+      totalValue += fund.value;
+      totalInvested += fund.invested;
     }
   }
 
