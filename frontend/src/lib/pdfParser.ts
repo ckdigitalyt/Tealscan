@@ -47,21 +47,28 @@ async function extractTextFromPDF(file: File, password: string): Promise<string>
     log.info('Loading PDF document with password...');
     
     // PDF.js can accept password as string or Uint8Array
-    // Create a password object that PDF.js can properly handle
-    const passwordValue = password ? password : '';
-    log.debug('Preparing password for PDF.js', { hasPassword: password.length > 0 });
+    // Try with string first, then handle password callback for encrypted PDFs
+    const passwordStr = password || '';
+    log.debug('Preparing password for PDF.js', { hasPassword: passwordStr.length > 0 });
     
     const loadingTask = pdfjsLib.getDocument({
       data: arrayBuffer,
-      password: passwordValue,
+      password: passwordStr,
     });
     
-    // Handle password-protected PDF with proper error handling
-    loadingTask.onPassword = (updatePassword: (pass: string) => void, reason: number) => {
-      log.debug('PDF password callback triggered', { reason });
-      if (reason === 1) {
-        // User password required
-        updatePassword(passwordValue);
+    // Handle password-protected PDF - set callback to provide password if needed
+    let passwordAttempted = false;
+    loadingTask.onPassword = (updatePassword: Function, reason: number) => {
+      log.debug('PDF password callback triggered', { reason, passwordAttempted });
+      // Reason: 1 = user password, 2 = owner password
+      if (!passwordAttempted && passwordStr) {
+        passwordAttempted = true;
+        try {
+          // Try updating with the provided password
+          updatePassword(passwordStr);
+        } catch (err) {
+          log.error('Error calling updatePassword', err);
+        }
       }
     };
     
