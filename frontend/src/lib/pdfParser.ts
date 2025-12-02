@@ -82,11 +82,40 @@ async function extractTextFromPDF(file: File, password: string): Promise<string>
       log.debug(`Extracting text from page ${i}/${pdf.numPages}...`);
       const page = await pdf.getPage(i);
       const textContent = await page.getTextContent();
-      const pageText = textContent.items
-        .map((item: any) => item.str)
-        .join(' ');
+      
+      // Group text items by Y-coordinate to preserve line breaks
+      const lineGroups: { [key: number]: Array<{str: string, x: number}> } = {};
+      
+      for (const item of textContent.items) {
+        // Filter to only TextItem objects (not TextMarkedContent)
+        if (!('str' in item)) continue;
+        if (item.str.trim() === '') continue;
+        
+        // Round Y coordinate to group items on the same line (with tolerance)
+        const y = Math.round((item as any).y * 10) / 10;
+        
+        if (!lineGroups[y]) {
+          lineGroups[y] = [];
+        }
+        lineGroups[y].push({ str: item.str, x: (item as any).x });
+      }
+      
+      // Sort lines by Y-coordinate (descending, since PDF Y increases downward)
+      const sortedYs = Object.keys(lineGroups)
+        .map(Number)
+        .sort((a, b) => b - a);
+      
+      // Build page text with proper line breaks
+      const lines = sortedYs.map(y => {
+        return lineGroups[y]
+          .sort((a, b) => a.x - b.x) // Sort items left to right
+          .map(item => item.str)
+          .join(' ');
+      });
+      
+      const pageText = lines.join('\n');
       fullText += pageText + '\n';
-      log.debug(`Page ${i} extracted`, { textLength: pageText.length });
+      log.debug(`Page ${i} extracted`, { textLength: pageText.length, lineCount: lines.length });
     }
 
     log.info('PDF text extraction complete', { totalTextLength: fullText.length });
