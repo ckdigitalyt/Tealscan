@@ -47,9 +47,8 @@ export default function DashboardTabs({ data }: DashboardTabsProps) {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4">
+    <div className="min-h-screen pt-24 pb-12 px-4 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        {/* Tab Navigation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -71,8 +70,8 @@ export default function DashboardTabs({ data }: DashboardTabsProps) {
                   transition={{ delay: i * 0.05 }}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
                     isActive
-                      ? "bg-gradient-to-r from-neon-green to-accent text-dark-bg shadow-lg shadow-neon-green/30"
-                      : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-300 border border-white/10"
+                      ? "bg-teal-600 text-white shadow-lg shadow-teal-500/30"
+                      : "bg-white text-gray-600 hover:bg-teal-50 hover:text-teal-700 border border-gray-200"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -83,7 +82,6 @@ export default function DashboardTabs({ data }: DashboardTabsProps) {
           </div>
         </motion.div>
 
-        {/* Tab Content */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

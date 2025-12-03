@@ -36,14 +36,14 @@ const itemVariants = {
 
 export default function Hero({ onScan, onSampleData, isLoading, error }: HeroProps) {
   return (
-    <section className="min-h-screen pt-24 pb-12 px-4 flex items-center relative overflow-hidden bg-dark-bg">
-      {/* Animated background gradient */}
+    <section className="min-h-screen pt-24 pb-12 px-4 flex items-center relative overflow-hidden bg-white">
+      <div className="absolute inset-0 bg-gradient-to-br from-teal-50 to-transparent opacity-60 pointer-events-none" />
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl animate-pulse opacity-50" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse opacity-50" style={{ animationDelay: "1s" }} />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-100 rounded-full blur-3xl animate-pulse opacity-40" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-200/30 rounded-full blur-3xl animate-pulse opacity-40" style={{ animationDelay: "1s" }} />
       </div>
 
-      <div className="max-w-7xl mx-auto w-full">
+      <div className="max-w-7xl mx-auto w-full relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             variants={containerVariants}
@@ -53,30 +53,44 @@ export default function Hero({ onScan, onSampleData, isLoading, error }: HeroPro
           >
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon-green/10 text-neon-green text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-100 text-teal-700 text-sm font-medium mb-6 border border-teal-200"
             >
               <Shield className="w-4 h-4" />
-              Open Source Logic • Client-Side Privacy
+              Open Source Logic - Client-Side Privacy
             </motion.div>
 
             <motion.h1 
               variants={itemVariants}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6"
             >
-              Your Portfolio
+              Stop Losing{" "}
+              <span className="text-teal-600">₹75K</span>
               <br />
-              <span className="gradient-text">Truly Analyzed</span>
-              <br />
-              <span className="text-2xl font-semibold text-gray-400">(Locally)</span>
+              to Hidden Charges
             </motion.h1>
 
             <motion.p 
               variants={itemVariants}
-              className="text-lg text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0"
+              className="text-lg text-gray-600 mb-8 max-w-lg mx-auto lg:mx-0"
             >
-              Direct plans can save up to <span className="font-semibold text-neon-green">~1% annually in fees</span>. 
-              Analyze your mutual fund portfolio in 30 seconds.
+              The world's first privacy-first portfolio analyzer.{" "}
+              <span className="font-semibold text-teal-600">Your data never leaves your browser.</span>
             </motion.p>
+
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-wrap gap-3 justify-center lg:justify-start"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-50 text-teal-700 text-sm border border-teal-200">
+                ✓ 100% Privacy Guaranteed
+              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-50 text-teal-700 text-sm border border-teal-200">
+                ✓ Your Data Never Uploaded
+              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-50 text-teal-700 text-sm border border-teal-200">
+                ✓ Tax-Aware Logic
+              </div>
+            </motion.div>
           </motion.div>
 
           <motion.div

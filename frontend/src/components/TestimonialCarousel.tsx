@@ -44,19 +44,18 @@ export default function TestimonialCarousel() {
     setCurrent((current - 1 + testimonials.length) % testimonials.length);
 
   return (
-    <section className="py-24 px-4 bg-dark-bg relative overflow-hidden">
-      {/* Background */}
+    <section className="py-24 px-4 bg-teal-50 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-0 w-96 h-96 bg-teal-100 rounded-full blur-3xl opacity-50" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-teal-200/30 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto">
         <FadeInSection className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Trusted by Smart Investors
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Trusted by <span className="text-teal-600">Smart Investors</span>
           </h2>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-600 text-lg">
             Join 10,000+ investors who've optimized their portfolios
           </p>
         </FadeInSection>
@@ -68,10 +67,11 @@ export default function TestimonialCarousel() {
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
-                  className={`glass-card rounded-xl p-8 border border-white/10 h-full ${
-                    i === current ? "ring-2 ring-neon-green" : ""
+                  className={`bg-white border border-teal-200 rounded-xl p-8 h-full shadow-sm hover:shadow-lg transition-all ${
+                    i === current ? "ring-2 ring-teal-500" : ""
                   }`}
                 >
+                  <div className="quote-icon text-teal-400 text-5xl mb-4">"</div>
                   <div className="flex gap-1 mb-4">
                     {Array.from({ length: testimonial.rating }).map((_, j) => (
                       <motion.div
@@ -80,18 +80,20 @@ export default function TestimonialCarousel() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: j * 0.1 }}
                       >
-                        <Star className="w-5 h-5 fill-neon-green text-neon-green" />
+                        <Star className="w-5 h-5 fill-teal-500 text-teal-500" />
                       </motion.div>
                     ))}
                   </div>
-                  <p className="text-gray-300 mb-6 leading-relaxed">
+                  <p className="text-gray-700 mb-6 leading-relaxed italic">
                     "{testimonial.text}"
                   </p>
                   <div className="flex items-center gap-3">
-                    <div className="text-3xl">{testimonial.avatar}</div>
+                    <div className="bg-teal-100 text-teal-600 w-12 h-12 rounded-full flex items-center justify-center text-2xl">
+                      {testimonial.avatar}
+                    </div>
                     <div>
-                      <p className="text-white font-semibold">{testimonial.name}</p>
-                      <p className="text-gray-400 text-sm">{testimonial.title}</p>
+                      <p className="text-gray-900 font-semibold">{testimonial.name}</p>
+                      <p className="text-gray-500 text-sm">{testimonial.title}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -99,7 +101,6 @@ export default function TestimonialCarousel() {
             ))}
           </StaggerContainer>
 
-          {/* Navigation Dots */}
           <div className="flex justify-center gap-2 mt-12">
             {testimonials.map((_, i) => (
               <motion.button
@@ -107,8 +108,8 @@ export default function TestimonialCarousel() {
                 onClick={() => setCurrent(i)}
                 className={`w-2 h-2 rounded-full transition-all ${
                   i === current
-                    ? "bg-neon-green w-8"
-                    : "bg-white/20 hover:bg-white/40"
+                    ? "bg-teal-600 w-8"
+                    : "bg-teal-300 hover:bg-teal-400"
                 }`}
                 whileHover={{ scale: 1.2 }}
               />

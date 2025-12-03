@@ -14,15 +14,14 @@ export default function RecommendationsTab({ data }: RecommendationsTabProps) {
 
   return (
     <div className="space-y-6">
-      {/* Priority 1: Exit Immediately */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
         <div className="flex items-center gap-2 mb-4">
-          <AlertTriangle className="w-5 h-5 text-neon-orange" />
-          <h3 className="text-lg font-semibold text-white">Priority 1: Exit Immediately</h3>
+          <AlertTriangle className="w-5 h-5 text-red-500" />
+          <h3 className="text-lg font-semibold text-gray-900">Priority 1: Exit Immediately</h3>
         </div>
         <div className="space-y-3">
           {exitFunds.map((fund, i) => (
@@ -31,14 +30,14 @@ export default function RecommendationsTab({ data }: RecommendationsTabProps) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="glass-card rounded-xl p-4 border border-neon-orange/30 bg-neon-orange/5 hover:border-neon-orange/50 transition-all"
+              className="bg-red-50 rounded-xl p-4 border border-red-200 hover:border-red-300 transition-all"
             >
-              <p className="text-white font-medium text-sm mb-2">{fund.name}</p>
-              <p className="text-xs text-gray-400 mb-3">Underperforming for 3+ months</p>
+              <p className="text-gray-900 font-medium text-sm mb-2">{fund.name}</p>
+              <p className="text-xs text-gray-600 mb-3">Underperforming for 3+ months</p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="text-xs px-3 py-1.5 bg-neon-orange/20 text-neon-orange rounded-lg hover:bg-neon-orange/30 transition-all font-semibold"
+                className="text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-all font-semibold"
               >
                 View Alternatives
               </motion.button>
@@ -47,30 +46,28 @@ export default function RecommendationsTab({ data }: RecommendationsTabProps) {
         </div>
       </motion.div>
 
-      {/* Priority 2: Pause SIPs */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <div className="flex items-center gap-2 mb-4">
-          <Pause className="w-5 h-5 text-yellow-400" />
-          <h3 className="text-lg font-semibold text-white">Priority 2: Monitor & Pause SIPs</h3>
+          <Pause className="w-5 h-5 text-amber-500" />
+          <h3 className="text-lg font-semibold text-gray-900">Priority 2: Monitor & Pause SIPs</h3>
         </div>
-        <div className="glass-card rounded-xl p-4 border border-white/10">
-          <p className="text-sm text-gray-400">No funds currently in this category. Your portfolio is performing well!</p>
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <p className="text-sm text-gray-600">No funds currently in this category. Your portfolio is performing well!</p>
         </div>
       </motion.div>
 
-      {/* Priority 3: Increase SIPs */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="w-5 h-5 text-neon-green" />
-          <h3 className="text-lg font-semibold text-white">Priority 3: Increase SIPs in Best Performers</h3>
+          <TrendingUp className="w-5 h-5 text-teal-600" />
+          <h3 className="text-lg font-semibold text-gray-900">Priority 3: Increase SIPs in Best Performers</h3>
         </div>
         <div className="space-y-3">
           {holdFunds.map((fund, i) => (
@@ -79,43 +76,41 @@ export default function RecommendationsTab({ data }: RecommendationsTabProps) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="glass-card rounded-xl p-4 border border-neon-green/30 bg-neon-green/5 hover:border-neon-green/50 transition-all"
+              className="bg-teal-50 rounded-xl p-4 border border-teal-200 hover:border-teal-300 transition-all"
             >
-              <p className="text-white font-medium text-sm mb-2">{fund.name}</p>
-              <p className="text-xs text-gray-400 mb-3">Top quartile performer • Consistent growth</p>
-              <p className="text-xs text-neon-green font-semibold">Suggested increase: +₹5,000/month</p>
+              <p className="text-gray-900 font-medium text-sm mb-2">{fund.name}</p>
+              <p className="text-xs text-gray-600 mb-3">Top quartile performer • Consistent growth</p>
+              <p className="text-xs text-teal-700 font-semibold">Suggested increase: +₹5,000/month</p>
             </motion.div>
           ))}
         </div>
       </motion.div>
 
-      {/* Priority 4: Tax Harvesting */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
         <div className="flex items-center gap-2 mb-4">
-          <Leaf className="w-5 h-5 text-accent" />
-          <h3 className="text-lg font-semibold text-white">Priority 4: Tax-Free Harvesting</h3>
+          <Leaf className="w-5 h-5 text-emerald-600" />
+          <h3 className="text-lg font-semibold text-gray-900">Priority 4: Tax-Free Harvesting</h3>
         </div>
-        <div className="glass-card rounded-xl p-4 border border-accent/30 bg-accent/5">
-          <p className="text-sm font-medium text-white mb-2">Harvest by: Dec 31, 2025</p>
-          <p className="text-xs text-gray-400">₹{(data.total_gain * 0.1).toFixed(0)} in potential tax-free LTCG gains</p>
+        <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+          <p className="text-sm font-medium text-gray-900 mb-2">Harvest by: Dec 31, 2025</p>
+          <p className="text-xs text-gray-600">₹{(data.total_gain * 0.1).toFixed(0)} in potential tax-free LTCG gains</p>
         </div>
       </motion.div>
 
-      {/* Rebalancing Plan */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="glass-card rounded-2xl p-6 border border-white/10"
+        className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
       >
-        <h3 className="text-lg font-semibold text-white mb-4">Suggested Rebalancing</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Suggested Rebalancing</h3>
         <div className="space-y-4">
           <div>
-            <p className="text-sm text-gray-400 mb-2">Action Items</p>
+            <p className="text-sm text-gray-600 mb-2">Action Items</p>
             <ul className="space-y-2">
               {[
                 "Switch 3 regular plans to direct plans",
@@ -124,8 +119,8 @@ export default function RecommendationsTab({ data }: RecommendationsTabProps) {
                 "Increase debt allocation by 3%",
               ].map((action, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm">
-                  <span className="flex-shrink-0 w-4 h-4 rounded-full bg-neon-green/30 mt-1" />
-                  <span className="text-gray-300">{action}</span>
+                  <span className="flex-shrink-0 w-4 h-4 rounded-full bg-teal-200 mt-1" />
+                  <span className="text-gray-700">{action}</span>
                 </li>
               ))}
             </ul>
@@ -133,7 +128,7 @@ export default function RecommendationsTab({ data }: RecommendationsTabProps) {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-3 bg-gradient-to-r from-neon-green to-accent text-dark-bg font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-green/30 transition-all"
+            className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg shadow-lg shadow-teal-500/30 transition-all"
           >
             Generate Rebalancing PDF
           </motion.button>

@@ -39,21 +39,26 @@ TealScan is a comprehensive Fintech SaaS application for analyzing mutual fund p
 │   │   │   ├── page.tsx       # Main page component with view states
 │   │   │   ├── layout.tsx     # Root layout with SEO metadata
 │   │   │   ├── debug/page.tsx # Debug page for PDF testing
-│   │   │   └── globals.css    # Global styles + mobile optimizations
+│   │   │   └── globals.css    # Global styles + teal theme
 │   │   ├── components/
-│   │   │   ├── Navbar.tsx            # Navigation bar
-│   │   │   ├── Hero.tsx              # App hero section
+│   │   │   ├── Navbar.tsx            # Navigation bar (teal branding)
+│   │   │   ├── Hero.tsx              # App hero section (white bg)
 │   │   │   ├── EnhancedLandingPage.tsx  # Landing page with all sections
 │   │   │   ├── EnhancedUploadCard.tsx   # PDF upload with smart loading
 │   │   │   ├── Dashboard.tsx         # Results dashboard with demo badge
 │   │   │   ├── DashboardTabs.tsx     # Tabbed dashboard views
 │   │   │   ├── FAQ.tsx               # FAQ accordion section
 │   │   │   ├── SavingsComparison.tsx # Regular vs Direct comparison
-│   │   │   ├── Footer.tsx            # TealScan branded footer
+│   │   │   ├── Footer.tsx            # TealScan branded footer (teal gradient)
 │   │   │   ├── ProblemSolution.tsx   # Problem/solution section
 │   │   │   ├── HowItWorks.tsx        # How it works steps
 │   │   │   ├── FeatureGrid.tsx       # Feature showcase
-│   │   │   └── TestimonialCarousel.tsx # User testimonials
+│   │   │   ├── TestimonialCarousel.tsx # User testimonials
+│   │   │   └── animations/           # Scroll animations
+│   │   │       ├── FadeInSection.tsx
+│   │   │       ├── AnimatedNumber.tsx
+│   │   │       ├── StaggerContainer.tsx
+│   │   │       └── ScrollProgress.tsx
 │   │   ├── lib/
 │   │   │   ├── pdfParser.ts   # Client-side PDF.js parsing
 │   │   │   └── sampleData.ts  # Demo portfolio data
@@ -82,6 +87,7 @@ TealScan is a comprehensive Fintech SaaS application for analyzing mutual fund p
 - File size validation (max 10MB)
 - Specific error messages with "Try Again" button
 - Mobile-optimized with 48px touch targets
+- Professional scroll animations (fade, stagger, counter, progress bar)
 
 ### SEO & Branding
 - Complete meta tags with OpenGraph and Twitter cards
@@ -90,12 +96,28 @@ TealScan is a comprehensive Fintech SaaS application for analyzing mutual fund p
 
 ## Design System
 
-- **Primary Color:** Neon Green (#00FF94)
-- **Accent Color:** Bright Teal (#2DD4BF)
-- **Background:** Dark (#121212)
-- **Error Color:** Neon Orange (#FF5555)
-- **Typography:** Inter font family
-- **UI Style:** Dark glassmorphism cards, rounded corners, neon accents
+### Color Palette (Light Teal Theme)
+- **Primary Teal:** #14b8a6 (Tailwind teal-500)
+- **Dark Teal:** #0f766e (Tailwind teal-700)
+- **Light Teal:** #5eead4 (Tailwind teal-300)
+- **Background:** White (#FFFFFF) / Light Gray (#F9FAFB)
+- **Text Primary:** Dark Gray (#1F2937)
+- **Text Secondary:** Medium Gray (#6B7280)
+- **Error/Warning:** Red (#EF4444) / Amber (#F59E0B)
+- **Success:** Emerald (#10B981)
+
+### Theme Philosophy
+- Light backgrounds for better readability of financial data
+- Teal accents for brand identity
+- White cards with subtle borders
+- Teal gradient footer
+- Professional fintech aesthetic
+
+### Typography
+- **Font Family:** Inter
+- **Headings:** Bold, Dark Gray
+- **Body:** Regular, Medium Gray
+- **Accents:** Teal colored highlights
 
 ## Running the Application
 
@@ -106,6 +128,16 @@ Both servers run concurrently via workflow:
 The frontend handles all PDF parsing locally for privacy.
 
 ## Recent Changes
+
+- **Dec 3, 2025:** Light Teal Theme Redesign
+  - Changed from dark theme to light/white background
+  - Updated primary color from neon green to teal (#14b8a6)
+  - White cards with teal accents and borders
+  - Teal gradient footer
+  - Updated all landing sections for light theme
+  - Updated dashboard tabs and analysis views
+  - Improved readability for financial data
+  - Professional fintech aesthetic matching industry standards
 
 - **Dec 2, 2025:** Production-ready improvements
   - Fixed PDF.js text extraction using transform matrix coordinates
@@ -118,6 +150,7 @@ The frontend handles all PDF parsing locally for privacy.
   - Improved error handling with Try Again button
   - Mobile optimization with touch targets
   - File validation and helper text
+  - Professional scroll animations
 
 - **Nov 28, 2025:** Initial implementation of TealScan MVP
   - FastAPI backend with CAS PDF parsing
@@ -127,10 +160,11 @@ The frontend handles all PDF parsing locally for privacy.
 
 ## User Preferences
 
-- Dark mode theme with neon green accents
+- Light theme with teal accents (TealScan branding)
 - All PDF parsing must happen client-side (privacy-first)
 - Professional fintech aesthetic
 - Framer Motion animations for smooth transitions
+- Better readability for numbers and charts
 
 ## Deployment
 

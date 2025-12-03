@@ -27,18 +27,17 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-24 px-4 bg-dark-card/50 relative overflow-hidden">
-      {/* Background */}
+    <section className="py-24 px-4 bg-gray-50 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-br from-neon-green/5 via-transparent to-transparent rounded-full blur-3xl" />
+        <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-br from-teal-100/50 via-transparent to-transparent rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto">
         <FadeInSection className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            How It Works
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            How <span className="text-teal-600">It Works</span>
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Simple, fast, and transparent. Three steps to portfolio insights.
           </p>
         </FadeInSection>
@@ -50,25 +49,25 @@ export default function HowItWorks() {
               <StaggerItem key={step.title}>
                 <div className="relative">
                   <motion.div 
-                    className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-neon-green to-accent shadow-lg shadow-neon-green/30 mb-6"
+                    className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg shadow-teal-500/30 mb-6"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <span className="text-2xl font-bold text-dark-bg">
+                    <span className="text-2xl font-bold text-white">
                       {step.number}
                     </span>
                   </motion.div>
 
                   <motion.div
-                    whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(0, 255, 148, 0.1)" }}
+                    whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(20, 184, 166, 0.15)" }}
                     transition={{ duration: 0.3 }}
-                    className="glass-card rounded-xl p-8 border border-white/10 h-full"
+                    className="bg-white rounded-xl p-8 border border-gray-200 hover:border-teal-300 h-full shadow-sm"
                   >
-                    <Icon className="w-12 h-12 text-neon-green mb-4" />
-                    <h3 className="text-xl font-bold text-white mb-3">
+                    <Icon className="w-12 h-12 text-teal-600 mb-4" />
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
                       {step.title}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed">
                       {step.description}
                     </p>
                   </motion.div>
@@ -84,7 +83,7 @@ export default function HowItWorks() {
                         animate={{ x: [0, 5, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                       >
-                        <ArrowRight className="w-8 h-8 text-neon-green/50" />
+                        <ArrowRight className="w-8 h-8 text-teal-400" />
                       </motion.div>
                     </motion.div>
                   )}
@@ -94,20 +93,19 @@ export default function HowItWorks() {
           })}
         </StaggerContainer>
 
-        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-16 text-center"
         >
-          <p className="text-gray-300 mb-6">
+          <p className="text-gray-700 mb-6">
             Ready to get started? Upload your portfolio in seconds.
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 bg-gradient-to-r from-neon-green to-accent text-dark-bg font-bold rounded-xl shadow-lg shadow-neon-green/30 hover:shadow-neon-green/50 transition-all"
+            className="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all"
           >
             Start Free Analysis
           </motion.button>

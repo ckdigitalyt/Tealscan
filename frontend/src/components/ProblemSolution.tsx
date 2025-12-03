@@ -10,46 +10,45 @@ const problems = [
     title: "Hidden Expense Ratios",
     description: "Are you paying 2.5% when you could pay 0.5%?",
     stat: "₹50,000+/year in hidden fees",
-    color: "neon-orange",
+    color: "red",
   },
   {
     icon: Copy,
     title: "Overlapping Holdings",
     description: "Own the same stock 5 times across different funds?",
     stat: "Reduce concentration risk",
-    color: "neon-green",
+    color: "teal",
   },
   {
     icon: AlertTriangle,
     title: "Tax Inefficient Switches",
     description: "Triggering unnecessary LTCG tax on rebalancing?",
     stat: "Save up to ₹1,00,000 annually",
-    color: "primary",
+    color: "amber",
   },
   {
     icon: TrendingUp,
     title: "Underperforming Funds",
     description: "Beating inflation or losing to it?",
     stat: "Optimize for better returns",
-    color: "accent",
+    color: "emerald",
   },
 ];
 
 export default function ProblemSolution() {
   return (
-    <section className="py-24 px-4 bg-dark-bg relative overflow-hidden">
-      {/* Background elements */}
+    <section className="py-24 px-4 bg-gray-50 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/4 right-0 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 right-0 w-96 h-96 bg-teal-100/50 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-teal-50 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto">
         <FadeInSection className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            The Problems Investors Face
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            The Problems <span className="text-teal-600">Investors Face</span>
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Most investors don't realize they're losing thousands to hidden charges, overlaps, and inefficient decisions.
           </p>
         </FadeInSection>
@@ -57,53 +56,42 @@ export default function ProblemSolution() {
         <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {problems.map((problem) => {
             const Icon = problem.icon;
-            const colorClass =
-              problem.color === "neon-green"
-                ? "from-neon-green/10 to-neon-green/5"
-                : problem.color === "neon-orange"
-                  ? "from-neon-orange/10 to-neon-orange/5"
-                  : problem.color === "primary"
-                    ? "from-primary/10 to-primary/5"
-                    : "from-accent/10 to-accent/5";
+            const iconBgColor =
+              problem.color === "red"
+                ? "bg-red-100"
+                : problem.color === "teal"
+                  ? "bg-teal-100"
+                  : problem.color === "amber"
+                    ? "bg-amber-100"
+                    : "bg-emerald-100";
+            
+            const iconTextColor =
+              problem.color === "red"
+                ? "text-red-600"
+                : problem.color === "teal"
+                  ? "text-teal-600"
+                  : problem.color === "amber"
+                    ? "text-amber-600"
+                    : "text-emerald-600";
 
             return (
               <StaggerItem key={problem.title}>
                 <motion.div
-                  whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0, 255, 148, 0.1)" }}
+                  whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(20, 184, 166, 0.15)" }}
                   transition={{ duration: 0.3 }}
-                  className={`glass-card rounded-xl p-6 border border-white/10 hover:border-neon-green/30 bg-gradient-to-br ${colorClass} h-full`}
+                  className="bg-white rounded-xl p-6 border border-gray-200 hover:border-teal-300 shadow-sm h-full"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <Icon className={`w-8 h-8 ${
-                        problem.color === "neon-green"
-                          ? "text-neon-green"
-                          : problem.color === "neon-orange"
-                            ? "text-neon-orange"
-                            : problem.color === "primary"
-                              ? "text-primary"
-                              : "text-accent"
-                      }`} />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-2">
-                        {problem.title}
-                      </h3>
-                      <p className="text-sm text-gray-300 mb-4">
-                        {problem.description}
-                      </p>
-                      <div className={`text-sm font-semibold ${
-                        problem.color === "neon-green"
-                          ? "text-neon-green"
-                          : problem.color === "neon-orange"
-                            ? "text-neon-orange"
-                            : problem.color === "primary"
-                              ? "text-primary"
-                              : "text-accent"
-                      }`}>
-                        {problem.stat}
-                      </div>
-                    </div>
+                  <div className={`${iconBgColor} ${iconTextColor} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    {problem.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {problem.description}
+                  </p>
+                  <div className={`text-sm font-semibold ${iconTextColor}`}>
+                    {problem.stat}
                   </div>
                 </motion.div>
               </StaggerItem>

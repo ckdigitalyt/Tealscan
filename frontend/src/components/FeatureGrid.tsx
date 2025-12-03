@@ -58,18 +58,17 @@ const features = [
 
 export default function FeatureGrid() {
   return (
-    <section className="py-24 px-4 bg-dark-card/50 relative overflow-hidden">
-      {/* Background */}
+    <section className="py-24 px-4 bg-white relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-100 rounded-full blur-3xl opacity-30" />
       </div>
 
       <div className="max-w-7xl mx-auto">
         <FadeInSection className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Powerful Features
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Powerful <span className="text-teal-600">Features</span>
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Everything you need to master your mutual fund investments
           </p>
         </FadeInSection>
@@ -80,17 +79,17 @@ export default function FeatureGrid() {
             return (
               <StaggerItem key={feature.title}>
                 <motion.div
-                  whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0, 255, 148, 0.1)" }}
+                  whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(20, 184, 166, 0.15)" }}
                   transition={{ duration: 0.3 }}
-                  className="glass-card rounded-xl p-6 border border-white/10 hover:border-neon-green/30 group cursor-pointer h-full"
+                  className="bg-white rounded-xl p-6 border border-gray-200 hover:border-teal-300 group cursor-pointer h-full shadow-sm"
                 >
-                  <div className="mb-4 inline-flex p-3 rounded-lg bg-neon-green/10 group-hover:bg-neon-green/20 transition-all">
-                    <Icon className="w-6 h-6 text-neon-green" />
+                  <div className="mb-4 inline-flex p-3 rounded-lg bg-teal-100 group-hover:bg-teal-600 transition-all">
+                    <Icon className="w-6 h-6 text-teal-600 group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-gray-400">{feature.description}</p>
+                  <p className="text-sm text-gray-600">{feature.description}</p>
                 </motion.div>
               </StaggerItem>
             );

@@ -14,17 +14,17 @@ export default function Navbar({ onReset, showReset }: NavbarProps) {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/80 backdrop-blur-lg border-b border-white/10"
+      className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-neon-green to-accent shadow-lg shadow-neon-green/30">
-              <Scan className="w-5 h-5 text-dark-bg" />
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-teal-600 shadow-lg shadow-teal-500/30">
+              <Scan className="w-5 h-5 text-white" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-white">Wealth Health Check</span>
-              <span className="flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-neon-green/10 text-neon-green rounded-full">
+              <span className="text-xl font-bold text-gray-900">TealScan</span>
+              <span className="flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-teal-100 text-teal-700 rounded-full border border-teal-200">
                 <Sparkles className="w-3 h-3" />
                 Beta
               </span>
@@ -36,7 +36,7 @@ export default function Navbar({ onReset, showReset }: NavbarProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               onClick={onReset}
-              className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-neon-green transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors"
             >
               ← Back
             </motion.button>

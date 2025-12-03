@@ -12,16 +12,16 @@ interface DashboardProps {
 
 export default function Dashboard({ data, isDemoMode = false }: DashboardProps) {
   return (
-    <div className="relative">
+    <div className="relative bg-gray-50 min-h-screen">
       {isDemoMode && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50"
         >
-          <div className="flex items-center gap-2 px-4 py-2 bg-accent/20 border border-accent/40 rounded-full backdrop-blur-sm">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-accent">Demo Data</span>
+          <div className="flex items-center gap-2 px-4 py-2 bg-teal-100 border border-teal-300 rounded-full backdrop-blur-sm shadow-sm">
+            <Sparkles className="w-4 h-4 text-teal-600" />
+            <span className="text-sm font-medium text-teal-700">Demo Data</span>
           </div>
         </motion.div>
       )}
