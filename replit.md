@@ -129,6 +129,17 @@ The frontend handles all PDF parsing locally for privacy.
 
 ## Recent Changes
 
+- **Dec 3, 2025:** Framer Motion Card Animations
+  - Enhanced FeatureGrid component with advanced Framer Motion animations
+  - Staggered card entrance animations (fade in + slide up)
+  - Hover effects: cards lift (y: -8px) and scale (1.02)
+  - Icon animations: rotate and scale on hover with spring physics
+  - Bottom accent line animations: expand from left to right on hover
+  - Background gradient animation on hover
+  - Spring transitions for smooth, natural motion
+  - All using pure Framer Motion (no CSS animations)
+  - Removed duplicate AnimatedCardsSection component
+
 - **Dec 3, 2025:** Light Teal Theme Redesign
   - Changed from dark theme to light/white background
   - Updated primary color from neon green to teal (#14b8a6)

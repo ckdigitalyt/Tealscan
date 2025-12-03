@@ -11,7 +11,6 @@ import {
   Search,
   Clock,
 } from "lucide-react";
-import { FadeInSection, StaggerContainer, StaggerItem } from "./animations";
 
 const features = [
   {
@@ -56,6 +55,32 @@ const features = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut" as const,
+    },
+  },
+};
+
 export default function FeatureGrid() {
   return (
     <section className="py-24 px-4 bg-white relative overflow-hidden">
@@ -64,37 +89,66 @@ export default function FeatureGrid() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <FadeInSection className="text-center mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Powerful <span className="text-teal-600">Features</span>
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Everything you need to master your mutual fund investments
           </p>
-        </FadeInSection>
+        </motion.div>
 
-        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.08}>
-          {features.map((feature) => {
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+        >
+          {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <StaggerItem key={feature.title}>
-                <motion.div
-                  whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(20, 184, 166, 0.15)" }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white rounded-xl p-6 border border-gray-200 hover:border-teal-300 group cursor-pointer h-full shadow-sm"
-                >
-                  <div className="mb-4 inline-flex p-3 rounded-lg bg-teal-100 group-hover:bg-teal-600 transition-all">
-                    <Icon className="w-6 h-6 text-teal-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+              <motion.div
+                key={index}
+                variants={cardVariants}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="group relative rounded-xl border border-gray-200 p-8 bg-white/50 backdrop-blur-sm hover:border-teal-200 hover:shadow-xl transition-all duration-300 overflow-hidden"
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-teal-50 to-transparent" />
+                </div>
+
+                <div className="relative z-10">
+                  <motion.div
+                    className="w-14 h-14 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300"
+                    whileHover={{ rotate: 6, scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Icon className="w-7 h-7" />
+                  </motion.div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-teal-600 transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="text-sm text-gray-600">{feature.description}</p>
-                </motion.div>
-              </StaggerItem>
+
+                  <motion.div
+                    className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-teal-500 to-teal-600"
+                    initial={{ width: 0 }}
+                    whileHover={{ width: "100%" }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+              </motion.div>
             );
           })}
-        </StaggerContainer>
+        </motion.div>
       </div>
     </section>
   );

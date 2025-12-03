@@ -9,7 +9,6 @@ import TestimonialCarousel from "./TestimonialCarousel";
 import SavingsComparison from "./SavingsComparison";
 import FAQ from "./FAQ";
 import Footer from "./Footer";
-import AnimatedCardsSection from "./AnimatedCardsSection";
 import { ScrollProgress } from "./animations";
 import { AnimatedNumber } from "./animations";
 import { useState } from "react";
@@ -194,7 +193,6 @@ export default function EnhancedLandingPage({
       </section>
 
       {/* Sections */}
-      <AnimatedCardsSection />
       <ProblemSolution />
       <SavingsComparison />
       <div id="how-it-works">
