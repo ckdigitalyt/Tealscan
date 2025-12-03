@@ -11,6 +11,7 @@ import {
   Search,
   Clock,
 } from "lucide-react";
+import { FadeInSection, StaggerContainer, StaggerItem } from "./animations";
 
 const features = [
   {
@@ -64,43 +65,37 @@ export default function FeatureGrid() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <FadeInSection className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Powerful Features
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Everything you need to master your mutual fund investments
           </p>
-        </motion.div>
+        </FadeInSection>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, i) => {
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.08}>
+          {features.map((feature) => {
             const Icon = feature.icon;
             return (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.08 }}
-                whileHover={{ y: -8 }}
-                className="glass-card rounded-xl p-6 border border-white/10 hover:border-neon-green/30 group cursor-pointer"
-              >
-                <div className="mb-4 inline-flex p-3 rounded-lg bg-neon-green/10 group-hover:bg-neon-green/20 transition-all">
-                  <Icon className="w-6 h-6 text-neon-green" />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-gray-400">{feature.description}</p>
-              </motion.div>
+              <StaggerItem key={feature.title}>
+                <motion.div
+                  whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0, 255, 148, 0.1)" }}
+                  transition={{ duration: 0.3 }}
+                  className="glass-card rounded-xl p-6 border border-white/10 hover:border-neon-green/30 group cursor-pointer h-full"
+                >
+                  <div className="mb-4 inline-flex p-3 rounded-lg bg-neon-green/10 group-hover:bg-neon-green/20 transition-all">
+                    <Icon className="w-6 h-6 text-neon-green" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-gray-400">{feature.description}</p>
+                </motion.div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

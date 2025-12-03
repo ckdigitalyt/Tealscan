@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { FadeInSection, StaggerContainer, StaggerItem } from "./animations";
 
 const testimonials = [
   {
@@ -51,54 +52,52 @@ export default function TestimonialCarousel() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <FadeInSection className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Trusted by Smart Investors
           </h2>
           <p className="text-gray-400 text-lg">
             Join 10,000+ investors who've optimized their portfolios
           </p>
-        </motion.div>
+        </FadeInSection>
 
         <div className="relative max-w-4xl mx-auto">
-          {/* Testimonial Cards */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <StaggerContainer className="grid md:grid-cols-2 gap-6">
             {testimonials.map((testimonial, i) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                className={`glass-card rounded-xl p-8 border border-white/10 ${
-                  i === current ? "ring-2 ring-neon-green" : ""
-                }`}
-              >
-                <div className="flex gap-1 mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, j) => (
-                    <Star
-                      key={j}
-                      className="w-5 h-5 fill-neon-green text-neon-green"
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  "{testimonial.text}"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl">{testimonial.avatar}</div>
-                  <div>
-                    <p className="text-white font-semibold">{testimonial.name}</p>
-                    <p className="text-gray-400 text-sm">{testimonial.title}</p>
+              <StaggerItem key={testimonial.name}>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                  className={`glass-card rounded-xl p-8 border border-white/10 h-full ${
+                    i === current ? "ring-2 ring-neon-green" : ""
+                  }`}
+                >
+                  <div className="flex gap-1 mb-4">
+                    {Array.from({ length: testimonial.rating }).map((_, j) => (
+                      <motion.div
+                        key={j}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: j * 0.1 }}
+                      >
+                        <Star className="w-5 h-5 fill-neon-green text-neon-green" />
+                      </motion.div>
+                    ))}
                   </div>
-                </div>
-              </motion.div>
+                  <p className="text-gray-300 mb-6 leading-relaxed">
+                    "{testimonial.text}"
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="text-3xl">{testimonial.avatar}</div>
+                    <div>
+                      <p className="text-white font-semibold">{testimonial.name}</p>
+                      <p className="text-gray-400 text-sm">{testimonial.title}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
 
           {/* Navigation Dots */}
           <div className="flex justify-center gap-2 mt-12">

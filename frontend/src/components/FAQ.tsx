@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, HelpCircle } from "lucide-react";
+import { FadeInSection, StaggerContainer, StaggerItem } from "./animations";
 
 const faqs = [
   {
@@ -41,13 +42,7 @@ export default function FAQ() {
   return (
     <section id="faq" className="py-20 px-4 bg-dark-bg">
       <div className="max-w-3xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
+        <FadeInSection className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon-green/10 text-neon-green text-sm font-medium mb-6">
             <HelpCircle className="w-4 h-4" />
             Got Questions?
@@ -58,18 +53,12 @@ export default function FAQ() {
           <p className="text-gray-400">
             Everything you need to know about TealScan
           </p>
-        </motion.div>
+        </FadeInSection>
 
-        <div className="space-y-4">
+        <StaggerContainer className="space-y-4">
           {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="glass-card rounded-xl border border-white/10 overflow-hidden"
-            >
+            <StaggerItem key={index}>
+              <div className="glass-card rounded-xl border border-white/10 overflow-hidden">
               <button
                 onClick={() => toggleFAQ(index)}
                 className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
@@ -98,9 +87,10 @@ export default function FAQ() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+              </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

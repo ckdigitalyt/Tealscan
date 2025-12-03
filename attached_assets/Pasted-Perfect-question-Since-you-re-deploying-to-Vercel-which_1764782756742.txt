@@ -1,0 +1,688 @@
+Perfect question! Since you’re deploying to Vercel (which is optimized for Next.js), **Framer Motion** works best and is actually recommended by Vercel themselves. It’s lightweight, tree-shakeable, and won’t bloat your bundle.
+
+Here’s the complete prompt for Replit Agent:
+
+-----
+
+# Replit Agent Prompt: Add Professional Scroll Animations to TealScan (Vercel-Optimized)
+
+## Context
+
+Add smooth, professional animations to TealScan landing page. The app is deployed on Vercel, so we’ll use Framer Motion which is optimized for Next.js and production deployments. All animations should be performant and enhance UX without slowing down the site.
+
+## Prerequisites
+
+- We’re using Next.js 14 with App Router
+- TypeScript
+- Deployed on Vercel
+- Current site: <https://ckdigitalyt1-tealscan.vercel.app>
+
+-----
+
+## Step 1: Install Framer Motion
+
+**Action**: Add framer-motion to package.json
+
+Run in terminal:
+
+```bash
+npm install framer-motion
+```
+
+Verify it’s added to `package.json` dependencies.
+
+-----
+
+## Step 2: Create Reusable Animation Components
+
+**Location**: Create new file `src/components/animations/FadeInSection.tsx`
+
+```typescript
+'use client';
+
+import { motion, useInView } from 'framer-motion';
+import { useRef, ReactNode } from 'react';
+
+interface FadeInSectionProps {
+  children: ReactNode;
+  delay?: number;
+  direction?: 'up' | 'down' | 'left' | 'right';
+  fullWidth?: boolean;
+}
+
+export const FadeInSection = ({ 
+  children, 
+  delay = 0, 
+  direction = 'up',
+  fullWidth = false 
+}: FadeInSectionProps) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { 
+    once: true, 
+    margin: "-100px" 
+  });
+
+  const directionOffset = {
+    up: { x: 0, y: 50 },
+    down: { x: 0, y: -50 },
+    left: { x: 50, y: 0 },
+    right: { x: -50, y: 0 }
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ 
+        opacity: 0, 
+        x: directionOffset[direction].x,
+        y: directionOffset[direction].y
+      }}
+      animate={isInView ? { 
+        opacity: 1, 
+        x: 0, 
+        y: 0 
+      } : {
+        opacity: 0,
+        x: directionOffset[direction].x,
+        y: directionOffset[direction].y
+      }}
+      transition={{ 
+        duration: 0.6, 
+        delay,
+        ease: [0.25, 0.4, 0.25, 1]
+      }}
+      className={fullWidth ? 'w-full' : ''}
+    >
+      {children}
+    </motion.div>
+  );
+};
+```
+
+-----
+
+## Step 3: Create Animated Number Counter Component
+
+**Location**: Create new file `src/components/animations/AnimatedNumber.tsx`
+
+```typescript
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { useInView } from 'framer-motion';
+
+interface AnimatedNumberProps {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  duration?: number;
+}
+
+export const AnimatedNumber = ({ 
+  value, 
+  prefix = '', 
+  suffix = '',
+  duration = 2000 
+}: AnimatedNumberProps) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!isInView) return;
+    
+    let startTime: number | null = null;
+    const startValue = 0;
+    const endValue = value;
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.floor(easeOutQuart * (endValue - startValue) + startValue);
+      
+      setCount(currentCount);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setCount(endValue);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [isInView, value, duration]);
+
+  return (
+    <span ref={ref}>
+      {prefix}
+      {count.toLocaleString('en-IN')}
+      {suffix}
+    </span>
+  );
+};
+```
+
+-----
+
+## Step 4: Create Staggered Container Component
+
+**Location**: Create new file `src/components/animations/StaggerContainer.tsx`
+
+```typescript
+'use client';
+
+import { motion } from 'framer-motion';
+import { ReactNode } from 'react';
+
+interface StaggerContainerProps {
+  children: ReactNode;
+  staggerDelay?: number;
+  className?: string;
+}
+
+export const StaggerContainer = ({ 
+  children, 
+  staggerDelay = 0.1,
+  className = '' 
+}: StaggerContainerProps) => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: staggerDelay,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+export const StaggerItem = ({ children, className = '' }: { children: ReactNode, className?: string }) => {
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.5,
+        ease: [0.25, 0.4, 0.25, 1]
+      }
+    }
+  };
+
+  return (
+    <motion.div variants={itemVariants} className={className}>
+      {children}
+    </motion.div>
+  );
+};
+```
+
+-----
+
+## Step 5: Create Scroll Progress Bar Component
+
+**Location**: Create new file `src/components/animations/ScrollProgress.tsx`
+
+```typescript
+'use client';
+
+import { motion, useScroll } from 'framer-motion';
+
+export const ScrollProgress = () => {
+  const { scrollYProgress } = useScroll();
+  
+  return (
+    <motion.div
+      style={{
+        scaleX: scrollYProgress,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '3px',
+        background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)',
+        transformOrigin: '0%',
+        zIndex: 9999
+      }}
+    />
+  );
+};
+```
+
+-----
+
+## Step 6: Apply Animations to Hero Section
+
+**Location**: `src/app/page.tsx` - Hero section
+
+**Requirements**:
+
+1. Import the animation components at the top:
+
+```typescript
+import { FadeInSection } from '@/components/animations/FadeInSection';
+import { AnimatedNumber } from '@/components/animations/AnimatedNumber';
+```
+
+1. Wrap the hero heading with FadeInSection:
+
+```typescript
+<FadeInSection delay={0.2}>
+  <h1 className="text-5xl md:text-7xl font-bold">
+    Stop Losing <AnimatedNumber value={75} prefix="₹" suffix="K" /> to Hidden Charges
+  </h1>
+</FadeInSection>
+```
+
+1. Animate the hero description:
+
+```typescript
+<FadeInSection delay={0.4}>
+  <p className="text-xl md:text-2xl text-gray-600">
+    The world's first privacy-first portfolio analyzer.
+    Your data never leaves your browser.
+  </p>
+</FadeInSection>
+```
+
+1. Animate the CTA buttons with hover effects:
+
+```typescript
+import { motion } from 'framer-motion';
+
+<FadeInSection delay={0.6}>
+  <div className="flex gap-4">
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="..."
+    >
+      Reveal Hidden Fees →
+    </motion.button>
+    
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="..."
+    >
+      View Sample Report
+    </motion.button>
+  </div>
+</FadeInSection>
+```
+
+1. Animate the badge/stats section:
+
+```typescript
+<FadeInSection delay={0.8} fullWidth>
+  <div className="badges-container">
+    {/* Your badges */}
+  </div>
+</FadeInSection>
+```
+
+-----
+
+## Step 7: Apply Animations to “Problems” Section
+
+**Location**: `src/app/page.tsx` - “The Problems Investors Face” section
+
+```typescript
+<FadeInSection>
+  <h2>The Problems Investors Face</h2>
+</FadeInSection>
+
+<StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <StaggerItem>
+    <div className="problem-card">
+      <h3>Hidden Expense Ratios</h3>
+      <p>Are you paying 2.5% when you could pay 0.5%?</p>
+    </div>
+  </StaggerItem>
+  
+  <StaggerItem>
+    <div className="problem-card">
+      <h3>Overlapping Holdings</h3>
+      <p>Own the same stock 5 times across different funds?</p>
+    </div>
+  </StaggerItem>
+  
+  {/* Repeat for other problem cards */}
+</StaggerContainer>
+```
+
+-----
+
+## Step 8: Apply Animations to “Regular vs Direct” Comparison
+
+**Location**: `src/app/page.tsx` - Before/After savings section
+
+```typescript
+<FadeInSection>
+  <h2>Regular vs Direct Plans</h2>
+  <p>See how much you could save...</p>
+</FadeInSection>
+
+<div className="comparison-container">
+  <FadeInSection direction="left" delay={0.2}>
+    <div className="regular-plan-card">
+      <h3>Regular Plans</h3>
+      <p>30-Year Cost</p>
+      <h4>₹<AnimatedNumber value={750000} />+</h4>
+    </div>
+  </FadeInSection>
+
+  <FadeInSection delay={0.3}>
+    <div className="vs-divider">VS</div>
+  </FadeInSection>
+
+  <FadeInSection direction="right" delay={0.4}>
+    <div className="direct-plan-card">
+      <h3>Direct Plans</h3>
+      <p>30-Year Cost</p>
+      <h4>₹<AnimatedNumber value={150000} /></h4>
+    </div>
+  </FadeInSection>
+</div>
+
+<FadeInSection delay={0.6}>
+  <div className="savings-highlight">
+    <h3>Your Potential Savings</h3>
+    <p>Annual: ₹<AnimatedNumber value={20000} /></p>
+    <p className="text-3xl font-bold">
+      30-Year Impact: ₹<AnimatedNumber value={1500000} />+
+    </p>
+  </div>
+</FadeInSection>
+```
+
+-----
+
+## Step 9: Apply Animations to “How It Works” Section
+
+**Location**: `src/app/page.tsx` - How it works section
+
+```typescript
+<FadeInSection>
+  <h2>How It Works</h2>
+  <p>Simple, fast, and transparent. Three steps to portfolio insights.</p>
+</FadeInSection>
+
+<StaggerContainer className="steps-container">
+  <StaggerItem>
+    <div className="step">
+      <div className="step-number">1</div>
+      <h3>Upload Your Statement</h3>
+      <p>CAMS/Karvy PDF, Excel, or CSV. 100% local processing.</p>
+    </div>
+  </StaggerItem>
+
+  <StaggerItem>
+    <div className="step">
+      <div className="step-number">2</div>
+      <h3>AI Analyzes in Seconds</h3>
+      <p>Advanced calculations run right in your browser.</p>
+    </div>
+  </StaggerItem>
+
+  <StaggerItem>
+    <div className="step">
+      <div className="step-number">3</div>
+      <h3>Get Recommendations</h3>
+      <p>Actionable insights to optimize your portfolio.</p>
+    </div>
+  </StaggerItem>
+</StaggerContainer>
+```
+
+-----
+
+## Step 10: Apply Animations to Features Section
+
+**Location**: `src/app/page.tsx` - Powerful Features section
+
+```typescript
+<FadeInSection>
+  <h2>Powerful Features</h2>
+  <p>Everything you need to master your mutual fund investments</p>
+</FadeInSection>
+
+<StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  {features.map((feature, index) => (
+    <StaggerItem key={index}>
+      <motion.div 
+        className="feature-card"
+        whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+        transition={{ duration: 0.3 }}
+      >
+        <h3>{feature.title}</h3>
+        <p>{feature.description}</p>
+      </motion.div>
+    </StaggerItem>
+  ))}
+</StaggerContainer>
+```
+
+-----
+
+## Step 11: Apply Animations to Testimonials
+
+**Location**: `src/app/page.tsx` - Testimonials section
+
+```typescript
+<FadeInSection>
+  <h2>Trusted by Smart Investors</h2>
+  <p>Join 10,000+ investors who've optimized their portfolios</p>
+</FadeInSection>
+
+<div className="testimonials-grid">
+  {testimonials.map((testimonial, index) => (
+    <FadeInSection 
+      key={index}
+      direction={index % 2 === 0 ? 'left' : 'right'}
+      delay={index * 0.1}
+    >
+      <motion.div
+        className="testimonial-card"
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.2 }}
+      >
+        <p>"{testimonial.quote}"</p>
+        <div className="author">
+          <strong>{testimonial.name}</strong>
+          <span>{testimonial.role}</span>
+        </div>
+      </motion.div>
+    </FadeInSection>
+  ))}
+</div>
+```
+
+-----
+
+## Step 12: Apply Animations to FAQ Section
+
+**Location**: `src/app/page.tsx` - FAQ section
+
+```typescript
+<FadeInSection>
+  <h2>Frequently Asked Questions</h2>
+  <p>Everything you need to know about TealScan</p>
+</FadeInSection>
+
+<StaggerContainer className="faq-container">
+  {faqs.map((faq, index) => (
+    <StaggerItem key={index}>
+      <motion.div 
+        className="faq-item"
+        whileHover={{ backgroundColor: 'rgba(0,0,0,0.02)' }}
+      >
+        {/* Your FAQ accordion content */}
+      </motion.div>
+    </StaggerItem>
+  ))}
+</StaggerContainer>
+```
+
+-----
+
+## Step 13: Add Scroll Progress Bar to Layout
+
+**Location**: `src/app/layout.tsx`
+
+```typescript
+import { ScrollProgress } from '@/components/animations/ScrollProgress';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <ScrollProgress />
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+-----
+
+## Step 14: Add Floating Animation to Main CTA in Hero
+
+**Location**: `src/app/page.tsx` - Main CTA button
+
+```typescript
+<motion.button
+  className="primary-cta"
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  animate={{ 
+    y: [0, -8, 0],
+  }}
+  transition={{ 
+    y: {
+      duration: 2,
+      repeat: Infinity,
+      ease: "easeInOut"
+    },
+    hover: { duration: 0.2 },
+    tap: { duration: 0.1 }
+  }}
+>
+  Reveal Hidden Fees →
+</motion.button>
+```
+
+-----
+
+## Step 15: Add Entrance Animation to Footer
+
+**Location**: `src/app/page.tsx` or `src/components/Footer.tsx`
+
+```typescript
+<FadeInSection delay={0}>
+  <footer className="bg-gray-900 text-white">
+    {/* Your footer content */}
+  </footer>
+</FadeInSection>
+```
+
+-----
+
+## Performance Optimization Guidelines:
+
+1. **Always use `viewport={{ once: true }}`** - Elements animate only once, not every time they scroll into view
+1. **Use `margin: "-100px"`** on viewport - Triggers animation slightly before element is visible for smoother experience
+1. **Stagger delays should be small** - Use 0.1s between items, not more
+1. **Limit animated elements** - Don’t animate every single element, focus on key sections
+1. **Test on mobile** - Ensure animations don’t cause jank on slower devices
+
+-----
+
+## Testing Checklist:
+
+After implementation, verify:
+
+- [ ] Page loads quickly (< 3 seconds on 3G)
+- [ ] Animations are smooth (60fps)
+- [ ] No layout shift during animations
+- [ ] Animations work on mobile Safari
+- [ ] Numbers count up correctly
+- [ ] Hover effects work on desktop
+- [ ] Scroll progress bar appears and functions
+- [ ] All sections fade in as you scroll
+- [ ] No console errors related to Framer Motion
+- [ ] Build succeeds without warnings: `npm run build`
+
+-----
+
+## Important Notes:
+
+1. **‘use client’ directive**: All animation components need `'use client'` at the top since they use React hooks
+1. **Import paths**: Use `@/components/...` for cleaner imports (already configured in Next.js)
+1. **TypeScript**: Ensure all props have proper types defined
+1. **Vercel optimization**: Framer Motion is automatically tree-shaken by Vercel’s build process, so only used features are included in bundle
+
+-----
+
+## After Implementation:
+
+1. Test locally: `npm run dev`
+1. Build for production: `npm run build` (check for errors)
+1. Push to GitHub:
+
+```bash
+git add .
+git commit -m "Add scroll animations with Framer Motion"
+git push
+```
+
+1. Vercel will auto-deploy
+1. Test on live site: <https://ckdigitalyt1-tealscan.vercel.app>
+
+-----
+
+## Troubleshooting:
+
+**If animations don’t work:**
+
+- Check browser console for errors
+- Ensure `'use client'` is at the top of animation components
+- Verify Framer Motion is installed: check `package.json`
+- Clear Next.js cache: delete `.next` folder and rebuild
+
+**If build fails:**
+
+- Check TypeScript errors: `npm run build`
+- Ensure all imports are correct
+- Verify all components have proper exports
+
+**If animations are choppy:**
+
+- Reduce number of animated elements
+- Increase stagger delay
+- Use `will-change: transform` CSS for critical animations
+
+-----
+
+Copy this entire prompt and paste it into Replit Agent. The agent should implement all animations step by step. Let me know if you encounter any issues!​​​​​​​​​​​​​​​​

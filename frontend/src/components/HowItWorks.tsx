@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CloudUpload, Zap, BarChart3, ArrowRight } from "lucide-react";
+import { FadeInSection, StaggerContainer, StaggerItem } from "./animations";
 
 const steps = [
   {
@@ -33,41 +34,34 @@ export default function HowItWorks() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <FadeInSection className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             How It Works
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Simple, fast, and transparent. Three steps to portfolio insights.
           </p>
-        </motion.div>
+        </FadeInSection>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <StaggerContainer className="grid md:grid-cols-3 gap-8" staggerDelay={0.15}>
           {steps.map((step, i) => {
             const Icon = step.icon;
             return (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.15 }}
-              >
+              <StaggerItem key={step.title}>
                 <div className="relative">
-                  {/* Number Badge */}
-                  <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-neon-green to-accent shadow-lg shadow-neon-green/30 mb-6">
+                  <motion.div 
+                    className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-neon-green to-accent shadow-lg shadow-neon-green/30 mb-6"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ duration: 0.3 }}
+                  >
                     <span className="text-2xl font-bold text-dark-bg">
                       {step.number}
                     </span>
-                  </div>
+                  </motion.div>
 
-                  {/* Card */}
                   <motion.div
-                    whileHover={{ y: -4 }}
+                    whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(0, 255, 148, 0.1)" }}
+                    transition={{ duration: 0.3 }}
                     className="glass-card rounded-xl p-8 border border-white/10 h-full"
                   >
                     <Icon className="w-12 h-12 text-neon-green mb-4" />
@@ -79,22 +73,26 @@ export default function HowItWorks() {
                     </p>
                   </motion.div>
 
-                  {/* Arrow */}
                   {i < steps.length - 1 && (
                     <motion.div
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.5 }}
                       className="hidden md:flex absolute -right-4 top-1/3 z-10"
                     >
-                      <ArrowRight className="w-8 h-8 text-neon-green/50" />
+                      <motion.div
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        <ArrowRight className="w-8 h-8 text-neon-green/50" />
+                      </motion.div>
                     </motion.div>
                   )}
                 </div>
-              </motion.div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
 
         {/* Bottom CTA */}
         <motion.div

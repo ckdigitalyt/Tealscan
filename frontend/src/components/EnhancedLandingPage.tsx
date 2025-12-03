@@ -9,6 +9,8 @@ import TestimonialCarousel from "./TestimonialCarousel";
 import SavingsComparison from "./SavingsComparison";
 import FAQ from "./FAQ";
 import Footer from "./Footer";
+import { ScrollProgress } from "./animations";
+import { AnimatedNumber } from "./animations";
 import { useState } from "react";
 
 interface EnhancedLandingPageProps {
@@ -22,6 +24,7 @@ export default function EnhancedLandingPage({
 
   return (
     <div className="min-h-screen bg-dark-bg">
+      <ScrollProgress />
       {/* Hero Section */}
       <section className="min-h-screen pt-24 pb-12 px-4 flex items-center relative overflow-hidden">
         {/* Animated background */}

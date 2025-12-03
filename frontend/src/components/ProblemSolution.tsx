@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { TrendingDown, Copy, AlertTriangle, TrendingUp } from "lucide-react";
+import { FadeInSection, StaggerContainer, StaggerItem } from "./animations";
 
 const problems = [
   {
@@ -44,22 +45,17 @@ export default function ProblemSolution() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <FadeInSection className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             The Problems Investors Face
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Most investors don't realize they're losing thousands to hidden charges, overlaps, and inefficient decisions.
           </p>
-        </motion.div>
+        </FadeInSection>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {problems.map((problem, i) => {
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {problems.map((problem) => {
             const Icon = problem.icon;
             const colorClass =
               problem.color === "neon-green"
@@ -71,50 +67,49 @@ export default function ProblemSolution() {
                     : "from-accent/10 to-accent/5";
 
             return (
-              <motion.div
-                key={problem.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                whileHover={{ y: -8 }}
-                className={`glass-card rounded-xl p-6 border border-white/10 hover:border-neon-green/30 bg-gradient-to-br ${colorClass}`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0">
-                    <Icon className={`w-8 h-8 ${
-                      problem.color === "neon-green"
-                        ? "text-neon-green"
-                        : problem.color === "neon-orange"
-                          ? "text-neon-orange"
-                          : problem.color === "primary"
-                            ? "text-primary"
-                            : "text-accent"
-                    }`} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-2">
-                      {problem.title}
-                    </h3>
-                    <p className="text-sm text-gray-300 mb-4">
-                      {problem.description}
-                    </p>
-                    <div className={`text-sm font-semibold ${
-                      problem.color === "neon-green"
-                        ? "text-neon-green"
-                        : problem.color === "neon-orange"
-                          ? "text-neon-orange"
-                          : problem.color === "primary"
-                            ? "text-primary"
-                            : "text-accent"
-                    }`}>
-                      {problem.stat}
+              <StaggerItem key={problem.title}>
+                <motion.div
+                  whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0, 255, 148, 0.1)" }}
+                  transition={{ duration: 0.3 }}
+                  className={`glass-card rounded-xl p-6 border border-white/10 hover:border-neon-green/30 bg-gradient-to-br ${colorClass} h-full`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <Icon className={`w-8 h-8 ${
+                        problem.color === "neon-green"
+                          ? "text-neon-green"
+                          : problem.color === "neon-orange"
+                            ? "text-neon-orange"
+                            : problem.color === "primary"
+                              ? "text-primary"
+                              : "text-accent"
+                      }`} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-2">
+                        {problem.title}
+                      </h3>
+                      <p className="text-sm text-gray-300 mb-4">
+                        {problem.description}
+                      </p>
+                      <div className={`text-sm font-semibold ${
+                        problem.color === "neon-green"
+                          ? "text-neon-green"
+                          : problem.color === "neon-orange"
+                            ? "text-neon-orange"
+                            : problem.color === "primary"
+                              ? "text-primary"
+                              : "text-accent"
+                      }`}>
+                        {problem.stat}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );
