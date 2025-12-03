@@ -147,7 +147,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-dark-bg">
+    <main className="min-h-screen bg-white">
       <AnimatePresence mode="wait">
         {view === "landing" ? (
           <motion.div
